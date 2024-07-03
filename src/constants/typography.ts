@@ -8,6 +8,10 @@ const baseStyles = {
   xxSmall: { fontSize: 8, lineHeight: 12, color: 'black' },
 };
 
+const italicStyles = {
+  fontStyle: 'italic',
+};
+
 const TYPOGRAPHY = {
   heading: {
     ...baseStyles,
@@ -26,11 +30,11 @@ const TYPOGRAPHY = {
     xSmall: { ...baseStyles.xSmall, fontWeight: 400 },
   },
   special: {
-    large: { ...baseStyles.large, fontStyle: 'italic' },
-    medium: { ...baseStyles.medium, fontStyle: 'italic' },
-    small: { ...baseStyles.small, fontStyle: 'italic' },
-    xSmall: { ...baseStyles.xSmall, fontStyle: 'italic' },
-    xxSmall: { ...baseStyles.xxSmall, fontStyle: 'italic' },
+    large: { ...baseStyles.large, ...italicStyles },
+    medium: { ...baseStyles.medium, ...italicStyles },
+    small: { ...baseStyles.small, ...italicStyles },
+    xSmall: { ...baseStyles.xSmall, ...italicStyles },
+    xxSmall: { ...baseStyles.xxSmall, ...italicStyles },
   },
 };
 
