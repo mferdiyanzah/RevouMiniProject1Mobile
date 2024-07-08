@@ -1,6 +1,7 @@
-import React from 'react';
-import { Pressable, Text, StyleSheet, TextStyle } from 'react-native';
 import COLORS from '@constants/colors';
+import TYPOGRAPHY from '@constants/typography';
+import React from 'react';
+import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 
 type ButtonVariant = 'primary' | 'outline' | 'tertiary' | 'link';
 type IconPosition = 'left' | 'right' | 'only';
@@ -27,19 +28,20 @@ const Button: React.FC<ButtonProps> = ({
   size = 'medium',
   width,
 }) => {
-  const getButtonStyle = () => [
-    styles.button,
-    styles[variant],
-    width === 'full' && styles.fullWidth,
+  const buttonStyle = [
+    baseStyles.button,
+    variantStyles[variant],
+    sizeStyles[size],
+    width === 'full' && layoutStyles.fullWidth,
     typeof width === 'number' && { width },
-    disabled && styles.disabled,
+    disabled && stateStyles.disabled,
   ];
 
-  const getTextStyle = () => [
-    styles.text,
-    styles[`${variant}Text`],
-    styles[`${size}Text`],
-    disabled && styles.disabledText,
+  const textStyle = [
+    variantTextStyles[variant],
+    TYPOGRAPHY.paragraph[size],
+    disabled && stateStyles.disabledText,
+    baseStyles.text,
   ];
 
   const renderIcon = () => {
@@ -49,40 +51,43 @@ const Button: React.FC<ButtonProps> = ({
 
     const iconStyle = [
       icon.props.style,
-      styles.icon,
-      { color: (getTextStyle()[1] as TextStyle).color },
-      disabled && styles.disabledText,
+      iconStyles.base,
+      { color: variantTextStyles[variant].color },
+      disabled && stateStyles.disabledText,
     ];
 
     return React.cloneElement(icon, { style: iconStyle });
   };
 
-  const shouldRenderLabel = () => iconPosition !== 'only' && label;
-
   return (
-    <Pressable style={getButtonStyle()} onPress={onPress} disabled={disabled}>
+    <TouchableOpacity style={buttonStyle} onPress={onPress} disabled={disabled}>
       {iconPosition === 'left' && renderIcon()}
-      {shouldRenderLabel() && <Text style={getTextStyle()}>{label}</Text>}
+      {iconPosition !== 'only' && label && (
+        <Text style={textStyle}>{label}</Text>
+      )}
       {iconPosition === 'right' && renderIcon()}
       {iconPosition === 'only' && renderIcon()}
-    </Pressable>
+    </TouchableOpacity>
   );
 };
 
-const baseTextStyle: TextStyle = {
-  fontSize: 16,
-  fontWeight: 'bold',
-};
-
-const styles = StyleSheet.create({
+const baseStyles = StyleSheet.create({
   button: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 20,
+    borderRadius: 32,
+    height: 48,
+    gap: 8,
+    marginHorizontal: 8,
+    marginVertical: 16,
   },
+  text: {
+    fontWeight: '700',
+  },
+});
+
+const variantStyles = StyleSheet.create({
   primary: { backgroundColor: COLORS.primary },
   outline: {
     backgroundColor: COLORS.transparent,
@@ -94,32 +99,41 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.transparent,
     paddingHorizontal: 0,
   },
-  text: baseTextStyle,
-  primaryText: { color: COLORS.light },
-  outlineText: { color: COLORS.primary },
-  tertiaryText: { color: COLORS.primary },
-  linkText: { color: COLORS.primary },
-  disabled: { opacity: 0.5 },
-  disabledText: { color: COLORS.gray },
-  icon: { marginRight: 8 },
+});
+
+const variantTextStyles = StyleSheet.create({
+  primary: { color: '#FFFFFF' },
+  outline: { color: COLORS.primary },
+  tertiary: { color: COLORS.primary },
+  link: { color: COLORS.primary },
+});
+
+const sizeStyles = StyleSheet.create({
   small: {
-    paddingVertical: 8,
+    paddingVertical: 6,
     paddingHorizontal: 12,
   },
   medium: {
-    paddingVertical: 12,
+    paddingVertical: 8,
     paddingHorizontal: 16,
   },
   large: {
-    paddingVertical: 16,
+    paddingVertical: 0,
     paddingHorizontal: 20,
   },
-  fullWidth: {
-    alignSelf: 'stretch',
-  },
-  smallText: { fontSize: 12 },
-  mediumText: { fontSize: 16 },
-  largeText: { fontSize: 20 },
+});
+
+const stateStyles = StyleSheet.create({
+  disabled: { opacity: 0.5 },
+  disabledText: { color: COLORS.gray },
+});
+
+const iconStyles = StyleSheet.create({
+  base: { marginRight: 8 },
+});
+
+const layoutStyles = StyleSheet.create({
+  fullWidth: { alignSelf: 'stretch' },
 });
 
 export default Button;
