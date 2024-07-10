@@ -94,8 +94,6 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'column',
     width: '100%',
-    paddingHorizontal: 16,
-    marginBottom: 16,
   },
   labelContainer: {
     marginBottom: 8,
@@ -109,8 +107,8 @@ const styles = StyleSheet.create({
   inputTextContainer: {
     borderWidth: 1,
     borderRadius: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
+    paddingHorizontal: 16,
+    // paddingVertical: 4,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },

@@ -1,33 +1,15 @@
+import Button from '@components/atoms/Button';
 import Input from '@components/atoms/Input';
+import LoginHeader from '@components/organisms/LoginHeader';
 import TYPOGRAPHY from '@constants/typography';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useMemo, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import LeftArrowSVG from '../assets/icons/left-arrow.svg';
-import LogoSVG from '../assets/icons/logo.svg';
-import Button from '@components/atoms/Button';
+import { RootStackParamList } from 'types/navigation';
 
-const LoginHeader = () => {
-  return (
-    <View style={loginHeaderStyles.container}>
-      <LeftArrowSVG />
-      <LogoSVG />
-      <Text>Lewati</Text>
-    </View>
-  );
-};
+type LoginProps = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
-const loginHeaderStyles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    flexDirection: 'row',
-    width: '100%',
-    paddingHorizontal: 16,
-  },
-});
-
-const Login = () => {
+const Login = ({ navigation }: LoginProps) => {
   const [email, setEmail] = useState<string>('');
 
   const isEmailValid = useMemo(() => {
@@ -39,9 +21,17 @@ const Login = () => {
     setEmail(value);
   };
 
+  const handleSkip = () => {
+    navigation.navigate('Onboarding');
+  };
+
+  const handleLogin = () => {
+    // Handle login logic here
+  };
+
   return (
     <View style={styles.container}>
-      <LoginHeader />
+      <LoginHeader onSkip={handleSkip} />
       <View style={styles.formTitleContainer}>
         <Text style={styles.formTitle}>Masuk ke Investly</Text>
       </View>
@@ -62,7 +52,13 @@ const Login = () => {
           label="Password"
         />
       </View>
-      <Button width="full" label="Masuk" variant="primary" size="large" />
+      <Button
+        onPress={handleLogin}
+        width="full"
+        label="Masuk"
+        variant="primary"
+        size="large"
+      />
     </View>
   );
 };
@@ -75,16 +71,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'white',
+    padding: 16,
   },
   formContainer: {
     flex: 12,
     width: '100%',
-    // padding: 16,
   },
   formTitleContainer: {
     flex: 1,
-    marginBottom: 16,
-    marginTop: 16,
+    marginHorizontal: 16,
   },
   formTitle: {
     color: 'black',

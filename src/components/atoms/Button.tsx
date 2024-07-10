@@ -9,7 +9,7 @@ type SizeVariant = 'small' | 'medium' | 'large';
 
 interface ButtonProps {
   label?: string;
-  onPress: () => void;
+  onPress?: () => void;
   variant?: ButtonVariant;
   icon?: JSX.Element;
   iconPosition?: IconPosition;
@@ -77,10 +77,8 @@ const baseStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 32,
-    height: 48,
+    // height: 48,
     gap: 8,
-    marginHorizontal: 8,
-    marginVertical: 16,
   },
   text: {
     fontWeight: '700',
@@ -110,8 +108,7 @@ const variantTextStyles = StyleSheet.create({
 
 const sizeStyles = StyleSheet.create({
   small: {
-    paddingVertical: 6,
-    paddingHorizontal: 12,
+    padding: 0,
   },
   medium: {
     paddingVertical: 8,
