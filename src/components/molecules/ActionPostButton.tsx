@@ -34,28 +34,26 @@ const ActionPostButton = ({
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        onPress={() => console.log('Comment')}
-        style={styles.buttonContainer}>
+      <View style={styles.buttonContainer}>
         {variant === 'upvote-downvote' ? (
           <View style={styles.upvoteDownvote}>
-            <View style={styles.buttonContainer}>
-              <Icon variant="up-arrow" />
+            <TouchableOpacity style={styles.buttonContainer}>
+              <Icon variant="up-arrow" size={16} />
               <Text style={styles.value}>{upvotes}</Text>
-            </View>
+            </TouchableOpacity>
             <View style={styles.divider} />
-            <View style={styles.buttonContainer}>
-              <Icon variant="up-arrow" style={styles.downArrow} />
+            <TouchableOpacity style={styles.buttonContainer}>
+              <Icon variant="up-arrow" size={16} style={styles.downArrow} />
               <Text style={styles.value}>{downvotes}</Text>
-            </View>
+            </TouchableOpacity>
           </View>
         ) : (
-          <View style={styles.buttonContainer}>
-            <Icon variant={iconVariant as any} />
+          <TouchableOpacity style={styles.buttonContainer}>
+            <Icon variant={iconVariant as any} size={16} />
             <Text style={styles.value}>{value}</Text>
-          </View>
+          </TouchableOpacity>
         )}
-      </TouchableOpacity>
+      </View>
     </View>
   );
 };

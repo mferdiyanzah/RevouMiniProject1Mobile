@@ -16,7 +16,14 @@ import HomeHeader from '@components/organisms/HomeHeader';
 const Tab = createBottomTabNavigator();
 
 const TabBarIcon = ({ focused, route }: { focused: boolean; route: any }) => {
-  return <Icon variant={route.name.toLowerCase()} />;
+  console.log(route, focused);
+  return (
+    <Icon
+      variant={route.name.toLowerCase()}
+      size={24}
+      style={{ color: focused ? COLORS.primary : COLORS.gray }}
+    />
+  );
 };
 
 const Home = () => {
@@ -34,6 +41,8 @@ const Home = () => {
         screenOptions={({ route }): BottomTabNavigationOptions => ({
           headerShown: false,
           tabBarIcon: ({ focused }) => TabBarIcon({ focused, route }),
+          tabBarLabelStyle: styles.tabBarLabel,
+          tabBarActiveTintColor: COLORS.primary,
         })}>
         <Tab.Screen name="Home" component={DefaultHome} />
         <Tab.Screen name="Profile" component={Profile} />
@@ -80,5 +89,8 @@ const styles = StyleSheet.create({
   loginExclamation: {
     ...TYPOGRAPHY.paragraph.small,
     color: COLORS.primary,
+  },
+  tabBarLabel: {
+    ...TYPOGRAPHY.heading.xSmall,
   },
 });

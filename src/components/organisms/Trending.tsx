@@ -47,7 +47,7 @@ const Trending = () => {
       position: faker.person.jobTitle(),
       time: faker.date.past(),
       title: faker.lorem.sentence(),
-      description: faker.lorem.paragraph(),
+      description: faker.word.words({ count: { min: 10, max: 200 } }),
       label: faker.word.noun(),
       upvotes: faker.number.int(1000),
       downvotes: faker.number.int(1000),

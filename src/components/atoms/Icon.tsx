@@ -1,5 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
+import { View, ViewStyle } from 'react-native';
 import BellSVG from '@assets/icons/bell.svg';
 import EyeSVG from '@assets/icons/eye.svg';
 import LeftArrowSVG from '@assets/icons/left-arrow.svg';
@@ -34,6 +34,7 @@ interface IconProps extends React.ComponentProps<typeof View> {
   variant: IconVariant;
   size?: number;
   fill?: string;
+  style?: ViewStyle;
 }
 
 const IconPath = {
@@ -53,11 +54,11 @@ const IconPath = {
   'eye-off': EyeOffSVG,
 };
 
-const Icon = ({ variant, style, size = 24, fill = 'black' }: IconProps) => {
+const Icon = ({ variant, size = 24, style }: IconProps) => {
   const SvgIcon = IconPath[variant];
   return (
-    <View style={style}>
-      <SvgIcon width={size} height={size} fill={fill} />
+    <View>
+      <SvgIcon width={size} height={size} style={style} />
     </View>
   );
 };

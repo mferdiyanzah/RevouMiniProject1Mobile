@@ -1,7 +1,11 @@
-import { View, Text } from 'react-native';
-import React from 'react';
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import COLORS from '@constants/colors';
+import TYPOGRAPHY from '@constants/typography';
+import {
+  createMaterialTopTabNavigator,
+  MaterialTopTabNavigationOptions,
+} from '@react-navigation/material-top-tabs';
+import React, { useMemo } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 import Trending from './Trending';
 
 const TopTab = createMaterialTopTabNavigator();
@@ -15,14 +19,19 @@ const Newest = () => {
 };
 
 const FeedsTabLayout = () => {
+  const screenOptions: MaterialTopTabNavigationOptions = useMemo(
+    () => ({
+      tabBarActiveTintColor: COLORS.primary,
+      tabBarInactiveTintColor: 'black', // Set inactive tab title color to black
+      tabBarLabelStyle: styles.tabBarLabel,
+      tabBarStyle: styles.tabBar,
+      tabBarIndicatorStyle: styles.tabBarIndicator,
+    }),
+    [],
+  );
+
   return (
-    <TopTab.Navigator
-      initialRouteName="For You"
-      screenOptions={{
-        tabBarActiveTintColor: COLORS.primary,
-        tabBarLabelStyle: { fontSize: 12, fontWeight: '700' },
-        tabBarStyle: { backgroundColor: 'white' },
-      }}>
+    <TopTab.Navigator initialRouteName="Trending" screenOptions={screenOptions}>
       <TopTab.Screen
         name="Trending"
         component={Trending}
@@ -38,3 +47,20 @@ const FeedsTabLayout = () => {
 };
 
 export default FeedsTabLayout;
+
+const styles = StyleSheet.create({
+  tabBarLabel: {
+    ...TYPOGRAPHY.heading.small,
+    textTransform: 'none',
+  },
+  tabBar: {
+    backgroundColor: COLORS.light,
+  },
+  tabBarIndicator: {
+    width: '40%',
+    marginHorizontal: 16,
+    backgroundColor: COLORS.primary,
+    borderWidth: 2,
+    borderColor: COLORS.primary,
+  },
+});

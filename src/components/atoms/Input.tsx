@@ -2,9 +2,8 @@ import COLORS from '@constants/colors';
 import TYPOGRAPHY from '@constants/typography';
 import React, { useMemo, useState } from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
-import Icon from './Icon';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import Button from './Button';
+import Icon from './Icon';
 
 type InputType = 'text' | 'password' | 'email' | 'number';
 type InputVariant = 'primary' | 'secondary' | 'tertiary';
@@ -20,16 +19,7 @@ interface InputProps extends React.ComponentProps<typeof TextInput> {
 }
 
 const Input: React.FC<InputProps> = props => {
-  const {
-    label,
-    placeholder,
-    type,
-    variant,
-    value,
-    state,
-    errorMessage,
-    onChangeText,
-  } = props;
+  const { label, placeholder, type, state, errorMessage, onChangeText } = props;
 
   const [showPassword, setShowPassword] = useState(false);
   const [currentState, setCurrentState] = useState<InputState>('default');

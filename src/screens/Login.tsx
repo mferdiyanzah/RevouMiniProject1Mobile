@@ -36,7 +36,7 @@ const Login = ({ navigation }: LoginProps) => {
   };
 
   const handleLogin = () => {
-    // Handle login logic here
+    navigation.navigate('HomeScreen');
   };
 
   return (
@@ -87,7 +87,7 @@ const Login = ({ navigation }: LoginProps) => {
         width="full"
         label="Masuk"
         variant="primary"
-        size="large"
+        size="medium"
         disabled={emailErrorMessage !== '' || passwordErrorMessage !== ''}
       />
     </View>
