@@ -11,7 +11,13 @@
       ],
       "@assets/*": [
         "assets/*"
-      ]
+      ],
+      "@screens/*": [
+        "screens/*"
+      ],
+      "@utils/*": [
+        "utils/*"
+      ],
     }
   }
 }

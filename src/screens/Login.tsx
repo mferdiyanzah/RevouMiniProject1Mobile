@@ -3,20 +3,29 @@ import Input from '@components/atoms/Input';
 import LoginHeader from '@components/organisms/LoginHeader';
 import TYPOGRAPHY from '@constants/typography';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import React, { useMemo, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Alert, StyleSheet, Text, View } from 'react-native';
 import { RootStackParamList } from 'types/navigation';
+import VALIDATOR from '@utils/validator';
 
 type LoginProps = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
 const Login = ({ navigation }: LoginProps) => {
   const [email, setEmail] = useState<string>('');
+  const [emailErrorMessage, setEmailErrorMessage] = useState<string>('');
 
-  const isEmailValid = useMemo(() => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return email === '' ? true : emailRegex.test(email);
+  const [password, setPassword] = useState<string>('');
+  const [passwordErrorMessage, setPasswordErrorMessage] = useState<string>('');
+
+  useEffect(() => {
+    const emailValidatorResponse = VALIDATOR.email(email);
+    setEmailErrorMessage(emailValidatorResponse);
   }, [email]);
-  console.log(isEmailValid, 'isEmailValid');
+
+  useEffect(() => {
+    const passwordValidatorResponse = VALIDATOR.password(password);
+    setPasswordErrorMessage(passwordValidatorResponse);
+  }, [password]);
 
   const handleEmailChange = (value: string) => {
     setEmail(value);
@@ -40,18 +49,38 @@ const Login = ({ navigation }: LoginProps) => {
         <Input
           type="email"
           placeholder="Email"
-          value=""
+          value={email}
           label="Email"
           onChangeText={handleEmailChange}
-          state={isEmailValid ? 'success' : 'error'}
-          errorMessage="Email is not valid"
+          state={
+            email ? (emailErrorMessage === '' ? 'success' : 'error') : 'default'
+          }
+          errorMessage={emailErrorMessage}
         />
-        <Input
-          type="password"
-          placeholder="Password"
-          value=""
-          label="Password"
-        />
+        <View>
+          <Input
+            type="password"
+            placeholder="Password"
+            value=""
+            label="Password"
+            onChangeText={value => setPassword(value)}
+            state={
+              password
+                ? passwordErrorMessage === ''
+                  ? 'success'
+                  : 'error'
+                : 'default'
+            }
+            errorMessage={passwordErrorMessage}
+          />
+          <Button
+            label="Lupa Password?"
+            onPress={() => Alert.alert('Lupa Password?')}
+            variant="link"
+            size="small"
+            width={100}
+          />
+        </View>
       </View>
       <Button
         onPress={handleLogin}
@@ -59,6 +88,7 @@ const Login = ({ navigation }: LoginProps) => {
         label="Masuk"
         variant="primary"
         size="large"
+        disabled={emailErrorMessage !== '' || passwordErrorMessage !== ''}
       />
     </View>
   );
@@ -75,12 +105,14 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   formContainer: {
+    marginTop: 32,
     flex: 12,
+    gap: 20,
     width: '100%',
   },
   formTitleContainer: {
     flex: 1,
-    marginHorizontal: 16,
+    marginTop: 24,
   },
   formTitle: {
     color: 'black',

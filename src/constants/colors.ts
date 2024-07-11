@@ -41,9 +41,10 @@ const COLORS = {
   neutral300: '#E2E2E4',
   neutral200: '#F7F7F7',
   neutral100: '#FFFFFF',
-  primary: '#5755F2',
+  primary: '#4343EF',
   light: '#FFFFFF',
   secondary: '#F0F0FF',
+  tertiary: '#ECECFD',
   gray: '#A0A0A0',
   transparent: 'transparent',
 };

@@ -12,7 +12,10 @@
         "alias": {
           "@components": "./src/components",
           "@constants": "./src/constants",
-          "@assets": "./src/assets"
+          "@assets": "./src/assets",
+          "@screens": "./src/screens",
+          "@utils": "./src/utils",
+          "@types": "./src/types",
         }
       }
     ]

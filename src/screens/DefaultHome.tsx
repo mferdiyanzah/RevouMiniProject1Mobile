@@ -1,13 +1,11 @@
 import ContentCreationCard from '@components/organisms/ContentCreationCard';
 import FeedsTabLayout from '@components/organisms/FeedsTabLayout';
-import HomeHeader from '@components/organisms/HomeHeader';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
 const DefaultHome = () => {
   return (
     <View style={styles.container}>
-      <HomeHeader />
       <ContentCreationCard />
       <FeedsTabLayout />
     </View>

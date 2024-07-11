@@ -1,6 +1,7 @@
 import Avatar from '@components/atoms/Avatar';
 import Icon from '@components/atoms/Icon';
-import React from 'react';
+import TYPOGRAPHY from '@constants/typography';
+import React, { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 interface IData {
@@ -19,13 +20,33 @@ interface IData {
 }
 
 const PostHeader = (data: IData) => {
+  // function to generate berapa detik/menit/jam/hari yang lalu
+  const timeAgo = useMemo(() => {
+    const now = new Date();
+    const diff = now.getTime() - data.time.getTime();
+    const seconds = Math.floor(diff / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+
+    if (days > 0) {
+      return `${days} days ago`;
+    } else if (hours > 0) {
+      return `${hours} hours ago`;
+    } else if (minutes > 0) {
+      return `${minutes} minutes ago`;
+    } else {
+      return `${seconds} seconds ago`;
+    }
+  }, [data.time]);
+
   return (
     <View style={styles.container}>
       <Avatar image={data.avatar} />
       <View>
-        <Text>{data.name}</Text>
-        <Text>{data.position}</Text>
-        <Text>{data.time.toDateString()}</Text>
+        <Text style={styles.name}>{data.name}</Text>
+        <Text style={styles.description}>{data.position}</Text>
+        <Text style={styles.description}>{timeAgo}</Text>
       </View>
       <View style={styles.dotThreeContainer}>
         <Icon variant="three-dots" />
@@ -44,5 +65,12 @@ const styles = StyleSheet.create({
   dotThreeContainer: {
     flex: 1,
     alignItems: 'flex-end',
+  },
+  name: {
+    ...TYPOGRAPHY.heading.xSmall,
+    color: 'black',
+  },
+  description: {
+    ...TYPOGRAPHY.paragraph.small,
   },
 });

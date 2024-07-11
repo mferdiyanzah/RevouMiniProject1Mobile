@@ -18,10 +18,29 @@ interface IData {
   shares: number;
 }
 
+const RenderItem = ({
+  item,
+  isLastIndex,
+}: {
+  item: IData;
+  isLastIndex: boolean;
+}) => {
+  return (
+    <View>
+      <Post {...item} />
+      {isLastIndex && (
+        <View style={styles.lastItemContainer}>
+          <Text>Semua feed sudah kamu lihat 🎉</Text>
+        </View>
+      )}
+    </View>
+  );
+};
+
 const Trending = () => {
   const data: IData[] = useMemo(() => {
     // generate 100 data with faker
-    return Array.from({ length: 100 }, (_, index) => ({
+    return Array.from({ length: 10 }, (_, index) => ({
       id: index,
       avatar: faker.image.avatar(),
       name: faker.person.fullName(),
@@ -42,7 +61,9 @@ const Trending = () => {
       <FlatList
         data={data}
         keyExtractor={item => item.id.toString()}
-        renderItem={({ item }) => <Post {...item} />}
+        renderItem={({ item, index }) => (
+          <RenderItem item={item} isLastIndex={index === data.length - 1} />
+        )}
       />
     </View>
   );
@@ -50,4 +71,11 @@ const Trending = () => {
 
 export default Trending;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  lastItemContainer: {
+    marginBottom: 50,
+    height: 80,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});

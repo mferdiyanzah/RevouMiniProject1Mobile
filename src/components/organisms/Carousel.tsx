@@ -1,4 +1,5 @@
 import Button from '@components/atoms/Button';
+import COLORS from '@constants/colors';
 import TYPOGRAPHY from '@constants/typography';
 import React, { useRef, useState } from 'react';
 import {
@@ -35,22 +36,34 @@ const Carousel: React.FC<CarouselProps> = ({ data }) => {
 
   return (
     <View style={styles.container}>
-      <FlatList
-        ref={flatListRef}
-        data={data}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        pagingEnabled
-        scrollEnabled={false}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }: ListRenderItemInfo<any>) => (
-          <View style={styles.carouselContainer}>
-            {item.image}
-            <Text style={styles.title}>{item.title}</Text>
-            <Text style={styles.description}>{item.description}</Text>
-          </View>
-        )}
-      />
+      <View style={styles.carouselContainer}>
+        <FlatList
+          ref={flatListRef}
+          data={data}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          pagingEnabled
+          scrollEnabled={false}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item }: ListRenderItemInfo<any>) => (
+            <View style={styles.carouselItemContainer}>
+              {item.image}
+              <Text style={styles.title}>{item.title}</Text>
+              <Text style={styles.description}>{item.description}</Text>
+            </View>
+          )}
+        />
+        <View style={styles.dotContainer}>
+          {data.map((_, index) => (
+            <View
+              key={index}
+              style={
+                index === currentIndex ? styles.dotActive : styles.dotDefault
+              }
+            />
+          ))}
+        </View>
+      </View>
       <View style={styles.buttonContainer}>
         <Button
           label={currentIndex === data.length - 1 ? 'Get Started' : 'Next'}
@@ -69,10 +82,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   item: {
-    width: 300, // Adjust the width as needed
+    width: 300,
     justifyContent: 'center',
     alignItems: 'center',
-    marginHorizontal: 10, // Adjust the margin as needed
+    marginHorizontal: 10,
   },
   description: {
     fontSize: 16,
@@ -89,9 +102,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   carouselContainer: {
-    height: windowHeight,
+    flex: 1,
+  },
+  carouselItemContainer: {
     width: windowWidth,
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
     alignItems: 'center',
     padding: 20,
     flex: 1,
@@ -109,21 +124,21 @@ const styles = StyleSheet.create({
   dotContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center',
-    flex: 2,
+    marginTop: 20,
+    flex: 1,
   },
   dotDefault: {
     height: 8,
     width: 8,
     borderRadius: 4,
-    backgroundColor: 'black',
+    backgroundColor: COLORS.gray,
     marginHorizontal: 4,
   },
   dotActive: {
     height: 8,
-    width: 8,
+    width: 20,
     borderRadius: 4,
-    backgroundColor: 'blue',
+    backgroundColor: COLORS.primary,
     marginHorizontal: 4,
   },
 });

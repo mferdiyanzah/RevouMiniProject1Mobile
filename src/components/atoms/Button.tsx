@@ -30,18 +30,15 @@ const Button: React.FC<ButtonProps> = ({
 }) => {
   const buttonStyle = [
     baseStyles.button,
-    variantStyles[variant],
-    sizeStyles[size],
-    width === 'full' && layoutStyles.fullWidth,
-    typeof width === 'number' && { width },
-    disabled && stateStyles.disabled,
+    buttonSizeStyles[size],
+    buttonVariantStyles[`${variant}-${disabled ? 'disabled' : 'default'}`],
+    width === 'full' ? layoutStyles.fullWidth : { width },
   ];
 
   const textStyle = [
-    variantTextStyles[variant],
-    TYPOGRAPHY.paragraph[size],
-    disabled && stateStyles.disabledText,
     baseStyles.text,
+    textSizeStyles[size],
+    textVariantStyles[`${variant}-${disabled ? 'disabled' : 'default'}`],
   ];
 
   const renderIcon = () => {
@@ -49,12 +46,7 @@ const Button: React.FC<ButtonProps> = ({
       return null;
     }
 
-    const iconStyle = [
-      icon.props.style,
-      iconStyles.base,
-      { color: variantTextStyles[variant].color },
-      disabled && stateStyles.disabledText,
-    ];
+    const iconStyle = [icon.props.style];
 
     return React.cloneElement(icon, { style: iconStyle });
   };
@@ -85,46 +77,46 @@ const baseStyles = StyleSheet.create({
   },
 });
 
-const variantStyles = StyleSheet.create({
-  primary: { backgroundColor: COLORS.primary },
-  outline: {
+const buttonSizeStyles = StyleSheet.create({
+  small: { height: 32 },
+  medium: { height: 40 },
+  large: { height: 48 },
+});
+
+const textSizeStyles = StyleSheet.create({
+  small: { ...TYPOGRAPHY.heading.xSmall },
+  medium: { ...TYPOGRAPHY.heading.small },
+  large: { ...TYPOGRAPHY.heading.medium },
+});
+
+const buttonVariantStyles = StyleSheet.create({
+  'primary-default': { backgroundColor: COLORS.primary },
+  'primary-disabled': { backgroundColor: COLORS.neutral400 },
+  'outline-default': {
     backgroundColor: COLORS.transparent,
     borderWidth: 1,
     borderColor: COLORS.primary,
   },
-  tertiary: { backgroundColor: COLORS.secondary },
-  link: {
+  'outline-disabled': {
     backgroundColor: COLORS.transparent,
-    paddingHorizontal: 0,
+    borderWidth: 1,
+    borderColor: COLORS.neutral400,
   },
+  'tertiary-default': { backgroundColor: COLORS.secondary },
+  'tertiary-disabled': { backgroundColor: COLORS.neutral400 },
+  'link-default': { backgroundColor: COLORS.transparent },
+  'link-disabled': { backgroundColor: COLORS.transparent },
 });
 
-const variantTextStyles = StyleSheet.create({
-  primary: { color: '#FFFFFF' },
-  outline: { color: COLORS.primary },
-  tertiary: { color: COLORS.primary },
-  link: { color: COLORS.primary },
-});
-
-const sizeStyles = StyleSheet.create({
-  small: {
-    height: 32,
-  },
-  medium: {
-    height: 40,
-  },
-  large: {
-    height: 48,
-  },
-});
-
-const stateStyles = StyleSheet.create({
-  disabled: { opacity: 0.5 },
-  disabledText: { color: COLORS.gray },
-});
-
-const iconStyles = StyleSheet.create({
-  base: { marginRight: 8 },
+const textVariantStyles = StyleSheet.create({
+  'primary-default': { color: COLORS.light },
+  'primary-disabled': { color: COLORS.neutral100 },
+  'outline-default': { color: COLORS.primary },
+  'outline-disabled': { color: COLORS.neutral400 },
+  'tertiary-default': { color: COLORS.primary },
+  'tertiary-disabled': { color: COLORS.neutral400 },
+  'link-default': { color: COLORS.primary },
+  'link-disabled': { color: COLORS.neutral400 },
 });
 
 const layoutStyles = StyleSheet.create({

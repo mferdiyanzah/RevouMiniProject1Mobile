@@ -1,11 +1,10 @@
-import { StyleSheet, Text, View } from 'react-native';
-import React from 'react';
-import COLORS from '@constants/colors';
-import PostHeader from './PostHeader';
-import TYPOGRAPHY from '@constants/typography';
-import Button from '@components/atoms/Button';
-import Icon from '@components/atoms/Icon';
 import Label from '@components/atoms/Label';
+import COLORS from '@constants/colors';
+import TYPOGRAPHY from '@constants/typography';
+import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import ActionPostButton from './ActionPostButton';
+import PostHeader from './PostHeader';
 
 interface IData {
   id: number;
@@ -21,46 +20,12 @@ interface IData {
   comments: number;
   shares: number;
 }
-const CTAButton = (data: IData) => {
-  return (
-    <View style={ctaStyles.container}>
-      <View style={ctaStyles.upvoteContainer}>
-        <Icon variant="up-arrow" />
-        <Text>{data.upvotes}</Text>
-      </View>
-      <View style={ctaStyles.downvoteContainer}>
-        <Icon variant="up-arrow" style={ctaStyles.downArrow} />
-        <Text>{data.downvotes}</Text>
-      </View>
-    </View>
-  );
-};
-
-const ctaStyles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  upvoteContainer: {
-    borderEndColor: COLORS.gray,
-    borderEndWidth: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  downvoteContainer: {
-    flexDirection: 'row',
-  },
-  downArrow: {
-    transform: [{ rotate: '180deg' }],
-  },
-});
 
 const Post = (data: IData) => {
   return (
     <View style={styles.container}>
       <PostHeader {...data} />
-      <View>
+      <View style={styles.postDetailContainer}>
         <Text style={styles.postTitle}>{data.title}</Text>
         <Text>{data.description}</Text>
         <View>
@@ -68,7 +33,14 @@ const Post = (data: IData) => {
         </View>
       </View>
       <View style={styles.ctaContainer}>
-        <Button
+        <ActionPostButton
+          upvotes={data.upvotes}
+          downvotes={data.downvotes}
+          variant="upvote-downvote"
+        />
+        <ActionPostButton value={data.comments} variant="comment" />
+        <ActionPostButton value={data.shares} variant="share" />
+        {/* <Button
           width={100}
           size="small"
           variant="tertiary"
@@ -89,7 +61,7 @@ const Post = (data: IData) => {
           label={data.shares.toString()}
           icon={<Icon variant="share" />}
           iconPosition="left"
-        />
+        /> */}
       </View>
     </View>
   );
@@ -106,11 +78,14 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: COLORS.gray,
     color: 'black',
-    gap: 8,
+    gap: 12,
   },
   postTitle: {
     ...TYPOGRAPHY.heading.medium,
     color: 'black',
+  },
+  postDetailContainer: {
+    gap: 8,
   },
   ctaContainer: {
     flexDirection: 'row',
