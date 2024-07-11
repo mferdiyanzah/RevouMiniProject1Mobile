@@ -1,62 +1,26 @@
-import { TextStyle } from 'react-native';
-
-const baseStyles = {
-  xxLarge: { fontSize: 28, lineHeight: 36 },
-  xLarge: { fontSize: 24, lineHeight: 32 },
-  large: { fontSize: 16, lineHeight: 24 },
-  medium: { fontSize: 14, lineHeight: 22 },
-  small: { fontSize: 12, lineHeight: 20 },
-  xSmall: { fontSize: 10, lineHeight: 18 },
-  xxSmall: { fontSize: 8, lineHeight: 12 },
-};
-
-const italicStyles: TextStyle = {
-  fontStyle: 'italic',
-};
-
-type SizeCategories =
-  | 'xxLarge'
-  | 'xLarge'
-  | 'large'
-  | 'medium'
-  | 'small'
-  | 'xSmall'
-  | 'xxSmall';
-
-type ParagraphSizes = Exclude<SizeCategories, 'xxLarge' | 'xLarge' | 'xxSmall'>;
-
-type SpecialSizes = Exclude<SizeCategories, 'xxLarge' | 'xLarge'>;
-
-interface Typography {
-  heading: { [K in SizeCategories]: TextStyle };
-  paragraph: { [K in ParagraphSizes]: TextStyle };
-  special: { [K in SpecialSizes]: TextStyle };
-}
-
-const TYPOGRAPHY: Typography = {
+const TYPOGRAPHY = {
   heading: {
-    ...baseStyles,
-    xxLarge: { ...baseStyles.xxLarge, fontWeight: 'bold' },
-    xLarge: { ...baseStyles.xLarge, fontWeight: '700' },
-    large: { fontSize: 20, lineHeight: 28, fontWeight: '700' },
-    medium: { ...baseStyles.large, fontWeight: '700' },
-    small: { ...baseStyles.medium, fontWeight: '700' },
-    xSmall: { ...baseStyles.small, fontWeight: '700' },
-    xxSmall: { ...baseStyles.xSmall, fontWeight: '700' },
+    xxLarge: { fontSize: 28, fontWeight: 'bold', lineHeight: 36 },
+    xLarge: { fontSize: 24, fontWeight: 'bold', lineHeight: 32 },
+    large: { fontSize: 20, fontWeight: 'bold', lineHeight: 28 },
+    medium: { fontSize: 16, fontWeight: 'bold', lineHeight: 24 },
+    small: { fontSize: 14, fontWeight: 'bold', lineHeight: 22 },
+    xSmall: { fontSize: 12, fontWeight: 'bold', lineHeight: 20 },
+    xxSmall: { fontSize: 10, fontWeight: 'bold', lineHeight: 18 },
   },
   paragraph: {
-    large: { ...baseStyles.large, fontWeight: '400' },
-    medium: { ...baseStyles.medium, fontWeight: '400' },
-    small: { ...baseStyles.small, fontWeight: '400' },
-    xSmall: { ...baseStyles.xSmall, fontWeight: '400' },
+    large: { fontSize: 16, fontWeight: 'regular', lineHeight: 24 },
+    medium: { fontSize: 14, fontWeight: 'regular', lineHeight: 22 },
+    small: { fontSize: 12, fontWeight: 'regular', lineHeight: 20 },
+    xSmall: { fontSize: 10, fontWeight: 'regular', lineHeight: 18 },
   },
   special: {
-    large: { ...baseStyles.large, ...italicStyles },
-    medium: { ...baseStyles.medium, ...italicStyles },
-    small: { ...baseStyles.small, ...italicStyles },
-    xSmall: { ...baseStyles.xSmall, ...italicStyles },
-    xxSmall: { ...baseStyles.xxSmall, ...italicStyles },
+    large: { fontSize: 16, fontStyle: 'italic', lineHeight: 24 },
+    medium: { fontSize: 14, fontStyle: 'italic', lineHeight: 22 },
+    small: { fontSize: 12, fontStyle: 'italic', lineHeight: 20 },
+    xSmall: { fontSize: 10, fontStyle: 'italic', lineHeight: 18 },
+    xxSmall: { fontSize: 8, fontStyle: 'italic', lineHeight: 12 },
   },
-};
+} as const;
 
 export default TYPOGRAPHY;

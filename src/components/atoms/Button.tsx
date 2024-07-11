@@ -8,7 +8,7 @@ type IconPosition = 'left' | 'right' | 'only';
 type SizeVariant = 'small' | 'medium' | 'large';
 
 interface ButtonProps {
-  label?: string;
+  label?: string | JSX.Element;
   onPress?: () => void;
   variant?: ButtonVariant;
   icon?: JSX.Element;
@@ -77,7 +77,7 @@ const baseStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 32,
-    // height: 48,
+    height: 'auto',
     gap: 8,
   },
   text: {
@@ -108,15 +108,13 @@ const variantTextStyles = StyleSheet.create({
 
 const sizeStyles = StyleSheet.create({
   small: {
-    padding: 0,
+    height: 32,
   },
   medium: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
+    height: 40,
   },
   large: {
-    paddingVertical: 0,
-    paddingHorizontal: 20,
+    height: 48,
   },
 });
 

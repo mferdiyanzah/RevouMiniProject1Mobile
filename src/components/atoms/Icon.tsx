@@ -10,6 +10,9 @@ import QuestionSVG from '../../assets/icons/question.svg';
 import DotThreeSVG from '../../assets/icons/three-dots.svg';
 import HomeSVG from '../../assets/icons/home.svg';
 import ProfileSVG from '../../assets/icons/profile.svg';
+import UpArrowSVG from '../../assets/icons/up-arrow.svg';
+import CommentSVG from '../../assets/icons/comment.svg';
+import ShareSVG from '../../assets/icons/share.svg';
 
 type IconVariant =
   | 'bell'
@@ -20,6 +23,9 @@ type IconVariant =
   | 'logo'
   | 'home'
   | 'profile'
+  | 'up-arrow'
+  | 'comment'
+  | 'share'
   | 'love';
 
 interface IconProps extends React.ComponentProps<typeof View> {
@@ -37,6 +43,9 @@ const IconPath = {
   eye: <EyeSVG />,
   home: <HomeSVG />,
   profile: <ProfileSVG />,
+  'up-arrow': <UpArrowSVG />,
+  comment: <CommentSVG />,
+  share: <ShareSVG />,
 };
 
 const Icon = ({ variant, style }: IconProps) => {

@@ -13,9 +13,15 @@ type LoginHeaderProps = {
 const LoginHeader = ({ onSkip }: LoginHeaderProps) => {
   return (
     <View style={loginHeaderStyles.container}>
-      <LeftArrowSVG />
-      <LogoSVG />
-      <Button onPress={onSkip} label="Lewati" variant="link" />
+      <View style={loginHeaderStyles.leftArrowContainer}>
+        <LeftArrowSVG />
+      </View>
+      <View style={loginHeaderStyles.logoContainer}>
+        <LogoSVG />
+      </View>
+      <View style={loginHeaderStyles.skipContainer}>
+        <Button onPress={onSkip} label="Lewati" variant="link" />
+      </View>
     </View>
   );
 };
@@ -25,7 +31,6 @@ export default LoginHeader;
 const loginHeaderStyles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'space-between',
     alignItems: 'center',
     flexDirection: 'row',
     width: '100%',
@@ -33,5 +38,16 @@ const loginHeaderStyles = StyleSheet.create({
   skipText: {
     color: COLORS.primary,
     ...TYPOGRAPHY.paragraph.small,
+  },
+  leftArrowContainer: {
+    flex: 1,
+  },
+  logoContainer: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  skipContainer: {
+    flex: 1,
+    alignItems: 'flex-end',
   },
 });

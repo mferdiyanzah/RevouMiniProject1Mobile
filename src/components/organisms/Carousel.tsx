@@ -94,6 +94,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
+    flex: 1,
   },
   buttonContainer: {
     position: 'absolute',
@@ -104,6 +105,26 @@ const styles = StyleSheet.create({
   title: {
     ...TYPOGRAPHY.heading.xLarge,
     color: 'black',
+  },
+  dotContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 2,
+  },
+  dotDefault: {
+    height: 8,
+    width: 8,
+    borderRadius: 4,
+    backgroundColor: 'black',
+    marginHorizontal: 4,
+  },
+  dotActive: {
+    height: 8,
+    width: 8,
+    borderRadius: 4,
+    backgroundColor: 'blue',
+    marginHorizontal: 4,
   },
 });
 

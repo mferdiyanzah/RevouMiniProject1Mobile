@@ -14,8 +14,9 @@ const Login = ({ navigation }: LoginProps) => {
 
   const isEmailValid = useMemo(() => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
+    return email === '' ? true : emailRegex.test(email);
   }, [email]);
+  console.log(isEmailValid, 'isEmailValid');
 
   const handleEmailChange = (value: string) => {
     setEmail(value);
