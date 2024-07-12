@@ -1,27 +1,7 @@
-import Post from '@components/atoms/Post';
+import PostContainer from '@components/molecules/PostContainer';
 import { useApp } from '@contexts/app';
 import React, { useMemo } from 'react';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
-import { IData } from 'types/data';
-
-const RenderItem = ({
-  item,
-  isLastIndex,
-}: {
-  item: IData;
-  isLastIndex: boolean;
-}) => {
-  return (
-    <View>
-      <Post {...item} />
-      {isLastIndex && (
-        <View style={styles.lastItemContainer}>
-          <Text>Semua feed sudah kamu lihat 🎉</Text>
-        </View>
-      )}
-    </View>
-  );
-};
+import { FlatList, View } from 'react-native';
 
 const Newest = () => {
   const { feedData } = useApp();
@@ -36,7 +16,7 @@ const Newest = () => {
         data={newestData}
         keyExtractor={item => item.id.toString()}
         renderItem={({ item, index }) => (
-          <RenderItem
+          <PostContainer
             item={item}
             isLastIndex={index === newestData.length - 1}
           />
@@ -47,12 +27,3 @@ const Newest = () => {
 };
 
 export default Newest;
-
-const styles = StyleSheet.create({
-  lastItemContainer: {
-    marginBottom: 50,
-    height: 80,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});

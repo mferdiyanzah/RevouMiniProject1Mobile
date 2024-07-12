@@ -13,7 +13,7 @@ const HomeTab = () => {
   useEffect(() => {
     const data: IData[] = Array.from({ length: 10 }, (_, index) => ({
       id: index,
-      avatar: faker.image.avatar(),
+      avatar: faker.image.urlLoremFlickr({ category: 'people' }),
       name: faker.person.fullName(),
       position: faker.person.jobTitle(),
       time: faker.date.recent({ days: 3 }),

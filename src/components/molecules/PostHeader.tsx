@@ -1,55 +1,43 @@
 import Avatar from '@components/atoms/Avatar';
+import Button from '@components/atoms/Button';
 import Icon from '@components/atoms/Icon';
+import Typography from '@components/atoms/Typography';
 import TYPOGRAPHY from '@constants/typography';
-import React, { useMemo } from 'react';
+import { useApp } from '@contexts/app';
+import { useHome } from '@contexts/home';
+import timesAgo from '@utils/date';
+import React, { useCallback } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-
-interface IData {
-  id: number;
-  avatar: string;
-  name: string;
-  position: string;
-  time: Date;
-  title: string;
-  description: string;
-  label: string;
-  upvotes: number;
-  downvotes: number;
-  comments: number;
-  shares: number;
-}
+import { IData } from 'types/data';
 
 const PostHeader = (data: IData) => {
-  // function to generate berapa detik/menit/jam/hari yang lalu
-  const timeAgo = useMemo(() => {
-    const now = new Date();
-    const diff = now.getTime() - data.time.getTime();
-    const seconds = Math.floor(diff / 1000);
-    const minutes = Math.floor(seconds / 60);
-    const hours = Math.floor(minutes / 60);
-    const days = Math.floor(hours / 24);
+  const { isLoggedIn } = useApp();
+  const { navigation } = useHome();
 
-    if (days > 0) {
-      return `${days} days ago`;
-    } else if (hours > 0) {
-      return `${hours} hours ago`;
-    } else if (minutes > 0) {
-      return `${minutes} minutes ago`;
-    } else {
-      return `${seconds} seconds ago`;
+  const handlePressThreeDot = useCallback(() => {
+    if (!isLoggedIn) {
+      navigation.navigate('Login');
+      return;
     }
-  }, [data.time]);
+  }, [isLoggedIn, navigation]);
 
   return (
     <View style={styles.container}>
       <Avatar image={data.avatar} />
       <View>
-        <Text style={styles.name}>{data.name}</Text>
+        <Typography type="heading" size="xSmall" style={styles.name}>
+          {data.name}
+        </Typography>
         <Text style={styles.description}>{data.position}</Text>
-        <Text style={styles.description}>{timeAgo}</Text>
+        <Text style={styles.description}>{timesAgo(data.time)}</Text>
       </View>
       <View style={styles.dotThreeContainer}>
-        <Icon variant="three-dots" />
+        <Button
+          variant="link"
+          icon={<Icon variant="three-dots" />}
+          iconPosition="only"
+          onPress={handlePressThreeDot}
+        />
       </View>
     </View>
   );
