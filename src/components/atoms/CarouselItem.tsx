@@ -1,6 +1,6 @@
-import { Dimensions, StyleSheet, Text, View } from 'react-native';
 import React from 'react';
-import TYPOGRAPHY from '@constants/typography';
+import { Dimensions, StyleSheet, View } from 'react-native';
+import Typography from './Typography';
 
 const { width: windowWidth } = Dimensions.get('window');
 
@@ -14,8 +14,12 @@ const CarouselItem = ({ data }: { data: CarouselItemProps }) => {
   return (
     <View style={styles.container}>
       {data.image}
-      <Text style={styles.title}>{data.title}</Text>
-      <Text style={styles.description}>{data.description}</Text>
+      <Typography type="heading" size="xLarge">
+        {data.title}
+      </Typography>
+      <Typography type="paragraph" size="medium" style={styles.description}>
+        {data.description}
+      </Typography>
     </View>
   );
 };
@@ -30,12 +34,7 @@ const styles = StyleSheet.create({
     padding: 20,
     flex: 1,
   },
-  title: {
-    ...TYPOGRAPHY.heading.xLarge,
-    color: 'black',
-  },
   description: {
-    fontSize: 16,
     textAlign: 'center',
   },
 });

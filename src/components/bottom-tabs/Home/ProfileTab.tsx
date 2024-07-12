@@ -3,12 +3,18 @@ import { useHome } from '@contexts/home';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import TYPOGRAPHY from '@constants/typography';
 import COLORS from '@constants/colors';
+import { useApp } from '@contexts/app';
 
 const ProfileTab = () => {
+  const { isLoggedIn } = useApp();
   const { navigation } = useHome();
 
   useEffect(() => {
-    // navigation.navigate('Login');
+    if (!isLoggedIn) {
+      navigation.navigate('Login');
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navigation]);
 
   return (

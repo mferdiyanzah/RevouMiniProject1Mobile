@@ -1,8 +1,10 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import React, { useMemo } from 'react';
+import Icon from '@components/atoms/Icon';
 import COLORS from '@constants/colors';
 import TYPOGRAPHY from '@constants/typography';
-import Icon from '@components/atoms/Icon';
+import { useApp } from '@contexts/app';
+import { useHome } from '@contexts/home';
+import React, { useCallback, useMemo } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 type ButtonVariant = 'comment' | 'share' | 'upvote-downvote';
 
@@ -19,6 +21,9 @@ const ActionPostButton = ({
   upvotes,
   downvotes,
 }: ActionPostButtonProps) => {
+  const { isLoggedIn } = useApp();
+  const { navigation } = useHome();
+
   const iconVariant = useMemo(() => {
     switch (variant) {
       case 'comment':
@@ -32,23 +37,36 @@ const ActionPostButton = ({
     }
   }, [variant]);
 
+  const handleClick = useCallback(() => {
+    if (!isLoggedIn) {
+      navigation.navigate('Login');
+      return;
+    }
+  }, [isLoggedIn, navigation]);
+
   return (
     <View style={styles.container}>
       <View style={styles.buttonContainer}>
         {variant === 'upvote-downvote' ? (
           <View style={styles.upvoteDownvote}>
-            <TouchableOpacity style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={styles.buttonContainer}
+              onPress={handleClick}>
               <Icon variant="up-arrow" size={16} />
               <Text style={styles.value}>{upvotes}</Text>
             </TouchableOpacity>
             <View style={styles.divider} />
-            <TouchableOpacity style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={styles.buttonContainer}
+              onPress={handleClick}>
               <Icon variant="up-arrow" size={16} style={styles.downArrow} />
               <Text style={styles.value}>{downvotes}</Text>
             </TouchableOpacity>
           </View>
         ) : (
-          <TouchableOpacity style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={styles.buttonContainer}
+            onPress={handleClick}>
             <Icon variant={iconVariant as any} size={16} />
             <Text style={styles.value}>{value}</Text>
           </TouchableOpacity>

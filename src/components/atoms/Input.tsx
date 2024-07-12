@@ -86,7 +86,7 @@ const Input: React.FC<InputProps> = props => {
   );
 };
 
-export default Input;
+export default React.memo(Input);
 
 const styles = StyleSheet.create({
   container: {

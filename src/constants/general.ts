@@ -3,4 +3,8 @@ const EMAIL_REGEX =
 
 const MAX_EMAIL_LENGTH = 254;
 
-export { EMAIL_REGEX, MAX_EMAIL_LENGTH };
+const CORRECT_EMAIL = 'mohammad.ferdiyanzah@test.app';
+
+const CORRECT_PASSWORD = 'TestApp123!';
+
+export { EMAIL_REGEX, MAX_EMAIL_LENGTH, CORRECT_EMAIL, CORRECT_PASSWORD };

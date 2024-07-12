@@ -5,24 +5,39 @@ import Input from '@components/atoms/Input';
 import COLORS from '@constants/colors';
 import { useApp } from '@contexts/app';
 import { useHome } from '@contexts/home';
-import { faker } from '@faker-js/faker';
-import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import React, { useCallback } from 'react';
+import { Alert, StyleSheet, View } from 'react-native';
 
 const ContentCreationCard = () => {
   const { isLoggedIn } = useApp();
 
   const { navigation } = useHome();
 
-  const goToLogin = () => {
+  const goToLogin = useCallback(() => {
     navigation.navigate('Login');
-  };
+  }, [navigation]);
+
+  const handleAddQuestion = useCallback(() => {
+    if (!isLoggedIn) {
+      goToLogin();
+      return;
+    }
+    Alert.alert('Add Question');
+  }, [goToLogin, isLoggedIn]);
+
+  const handleAddPost = useCallback(() => {
+    if (!isLoggedIn) {
+      goToLogin();
+      return;
+    }
+    Alert.alert('Add Post');
+  }, [goToLogin, isLoggedIn]);
 
   return (
     <View style={styles.container}>
       <View style={styles.cardContainer}>
         <View style={styles.headerContainer}>
-          <Avatar image={faker.image.urlLoremFlickr({ category: 'people' })} />
+          <Avatar />
           <View style={styles.inputContainer}>
             <Input
               variant="primary"
@@ -40,7 +55,7 @@ const ContentCreationCard = () => {
               label="Pertanyaan"
               icon={<Icon variant="question" />}
               iconPosition="left"
-              onPress={goToLogin}
+              onPress={handleAddQuestion}
             />
           </View>
           <View style={styles.addPostContainer}>
@@ -50,7 +65,7 @@ const ContentCreationCard = () => {
               label="Post"
               icon={<Icon variant="plus" />}
               iconPosition="left"
-              onPress={goToLogin}
+              onPress={handleAddPost}
             />
           </View>
         </View>
@@ -59,7 +74,7 @@ const ContentCreationCard = () => {
   );
 };
 
-export default ContentCreationCard;
+export default React.memo(ContentCreationCard);
 
 const styles = StyleSheet.create({
   container: {
