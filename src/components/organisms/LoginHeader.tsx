@@ -8,13 +8,20 @@ import LogoSVG from '../../assets/icons/logo.svg';
 
 type LoginHeaderProps = {
   onSkip: () => void;
+  goToPreviousScreen?: () => void;
 };
 
-const LoginHeader = ({ onSkip }: LoginHeaderProps) => {
+const LoginHeader = ({ onSkip, goToPreviousScreen }: LoginHeaderProps) => {
   return (
     <View style={loginHeaderStyles.container}>
       <View style={loginHeaderStyles.leftArrowContainer}>
-        <LeftArrowSVG />
+        <Button
+          onPress={goToPreviousScreen}
+          variant="link"
+          icon={<LeftArrowSVG />}
+          iconPosition="only"
+          width={30}
+        />
       </View>
       <View style={loginHeaderStyles.logoContainer}>
         <LogoSVG />

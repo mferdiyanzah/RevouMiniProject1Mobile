@@ -14,31 +14,39 @@ interface InputProps extends React.ComponentProps<typeof TextInput> {
   type?: InputType;
   variant?: InputVariant;
   value?: string;
-  state?: InputState;
+  state: InputState;
   errorMessage?: string;
 }
 
 const Input: React.FC<InputProps> = props => {
-  const { label, placeholder, type, state, errorMessage, onChangeText } = props;
+  const {
+    label,
+    placeholder,
+    type,
+    state,
+    errorMessage,
+    onChangeText,
+    onPress,
+  } = props;
 
   const [showPassword, setShowPassword] = useState(false);
   const [currentState, setCurrentState] = useState<InputState>('default');
 
   const handleFocus = () => {
-    state !== 'error' && setCurrentState('focus');
+    setCurrentState('focus');
   };
 
   const handleBlur = () => {
-    state !== 'error' && setCurrentState('default');
+    setCurrentState('default');
   };
 
   const textInputStyles = useMemo(() => {
     const inputStyle = [styles.inputTextContainer, inputStyles.default];
 
-    if (state) {
-      inputStyle.push(inputStyles[state]);
-    } else {
+    if (state === 'default') {
       inputStyle.push(inputStyles[currentState]);
+    } else {
+      inputStyle.push(inputStyles[state]);
     }
 
     return inputStyle;
@@ -60,12 +68,13 @@ const Input: React.FC<InputProps> = props => {
           onFocus={handleFocus}
           onBlur={handleBlur}
           onChangeText={onChangeText}
+          onPress={onPress}
         />
         {type === 'password' && (
           <Button
             variant="link"
             onPress={() => setShowPassword(!showPassword)}
-            icon={<Icon variant={showPassword ? 'eye-off' : 'eye'} size={16} />}
+            icon={<Icon variant={showPassword ? 'eye' : 'eye-off'} size={16} />}
             iconPosition="only"
           />
         )}

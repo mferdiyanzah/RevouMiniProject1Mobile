@@ -4,7 +4,7 @@ import TYPOGRAPHY from '@constants/typography';
 import React, { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import ActionPostButton from './ActionPostButton';
-import PostHeader from './PostHeader';
+import PostHeader from '../molecules/PostHeader';
 
 interface IData {
   id: number;

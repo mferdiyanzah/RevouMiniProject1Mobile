@@ -3,14 +3,17 @@ import Input from '@components/atoms/Input';
 import LoginHeader from '@components/organisms/LoginHeader';
 import TYPOGRAPHY from '@constants/typography';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Alert, StyleSheet, Text, View } from 'react-native';
 import { RootStackParamList } from 'types/navigation';
 import VALIDATOR from '@utils/validator';
+import { useApp } from '@contexts/app';
 
 type LoginProps = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
 const Login = ({ navigation }: LoginProps) => {
+  const { setIsLoggedIn } = useApp();
+
   const [email, setEmail] = useState<string>('');
   const [emailErrorMessage, setEmailErrorMessage] = useState<string>('');
 
@@ -32,16 +35,24 @@ const Login = ({ navigation }: LoginProps) => {
   };
 
   const handleSkip = () => {
-    navigation.navigate('Onboarding');
-  };
-
-  const handleLogin = () => {
     navigation.navigate('HomeScreen');
   };
 
+  const handleLogin = () => {
+    setIsLoggedIn(true);
+    navigation.navigate('HomeScreen');
+  };
+
+  const goToPreviousScreen = useCallback(() => {
+    navigation.goBack();
+  }, [navigation]);
+
   return (
     <View style={styles.container}>
-      <LoginHeader onSkip={handleSkip} />
+      <LoginHeader
+        onSkip={handleSkip}
+        goToPreviousScreen={goToPreviousScreen}
+      />
       <View style={styles.formTitleContainer}>
         <Text style={styles.formTitle}>Masuk ke Investly</Text>
       </View>

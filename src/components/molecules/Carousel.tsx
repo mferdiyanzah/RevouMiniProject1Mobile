@@ -1,38 +1,36 @@
 import Button from '@components/atoms/Button';
+import CarouselItem from '@components/atoms/CarouselItem';
 import COLORS from '@constants/colors';
-import TYPOGRAPHY from '@constants/typography';
-import React, { useRef, useState } from 'react';
-import {
-  Alert,
-  Dimensions,
-  FlatList,
-  ListRenderItemInfo,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
-
-const { width: windowWidth, height: windowHeight } = Dimensions.get('window');
+import React, { useCallback, useRef, useState } from 'react';
+import { FlatList, ListRenderItemInfo, StyleSheet, View } from 'react-native';
 
 interface CarouselProps {
   data: any;
+  goToLogin: () => void;
 }
 
-const Carousel: React.FC<CarouselProps> = ({ data }) => {
+const Carousel: React.FC<CarouselProps> = ({ data, goToLogin }) => {
   const flatListRef = useRef<FlatList<string>>(null);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
 
   const handleNext = () => {
-    if (currentIndex < data.length - 1) {
+    const isLastIndex = currentIndex === data.length - 1;
+
+    if (!isLastIndex) {
       const nextIndex = currentIndex + 1;
       flatListRef.current?.scrollToIndex({ animated: true, index: nextIndex });
       setCurrentIndex(nextIndex);
     } else {
-      Alert.alert('Last item reached');
-      flatListRef.current?.scrollToIndex({ animated: true, index: 0 });
-      setCurrentIndex(0);
+      goToLogin();
     }
   };
+
+  const renderCarouselItem = useCallback(
+    ({ item }: ListRenderItemInfo<any>) => {
+      return <CarouselItem data={item} />;
+    },
+    [],
+  );
 
   return (
     <View style={styles.container}>
@@ -45,16 +43,10 @@ const Carousel: React.FC<CarouselProps> = ({ data }) => {
           pagingEnabled
           scrollEnabled={false}
           keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item }: ListRenderItemInfo<any>) => (
-            <View style={styles.carouselItemContainer}>
-              {item.image}
-              <Text style={styles.title}>{item.title}</Text>
-              <Text style={styles.description}>{item.description}</Text>
-            </View>
-          )}
+          renderItem={renderCarouselItem}
         />
         <View style={styles.dotContainer}>
-          {data.map((_, index) => (
+          {data.map((_: any, index: React.Key | null | undefined) => (
             <View
               key={index}
               style={
@@ -87,10 +79,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginHorizontal: 10,
   },
-  description: {
-    fontSize: 16,
-    textAlign: 'center',
-  },
   button: {
     marginTop: 20,
     padding: 10,
@@ -104,22 +92,11 @@ const styles = StyleSheet.create({
   carouselContainer: {
     flex: 1,
   },
-  carouselItemContainer: {
-    width: windowWidth,
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    padding: 20,
-    flex: 1,
-  },
   buttonContainer: {
     position: 'absolute',
     bottom: 20,
     width: '100%',
     paddingHorizontal: 20,
-  },
-  title: {
-    ...TYPOGRAPHY.heading.xLarge,
-    color: 'black',
   },
   dotContainer: {
     flexDirection: 'row',

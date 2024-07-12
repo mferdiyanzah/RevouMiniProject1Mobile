@@ -3,11 +3,21 @@ import Button from '@components/atoms/Button';
 import Icon from '@components/atoms/Icon';
 import Input from '@components/atoms/Input';
 import COLORS from '@constants/colors';
+import { useApp } from '@contexts/app';
+import { useHome } from '@contexts/home';
 import { faker } from '@faker-js/faker';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
 const ContentCreationCard = () => {
+  const { isLoggedIn } = useApp();
+
+  const { navigation } = useHome();
+
+  const goToLogin = () => {
+    navigation.navigate('Login');
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.cardContainer}>
@@ -17,6 +27,8 @@ const ContentCreationCard = () => {
             <Input
               variant="primary"
               placeholder="Apa yang ingin kamu tanyakan?"
+              state="default"
+              onPress={isLoggedIn ? undefined : goToLogin}
             />
           </View>
         </View>
@@ -28,6 +40,7 @@ const ContentCreationCard = () => {
               label="Pertanyaan"
               icon={<Icon variant="question" />}
               iconPosition="left"
+              onPress={goToLogin}
             />
           </View>
           <View style={styles.addPostContainer}>
@@ -37,6 +50,7 @@ const ContentCreationCard = () => {
               label="Post"
               icon={<Icon variant="plus" />}
               iconPosition="left"
+              onPress={goToLogin}
             />
           </View>
         </View>

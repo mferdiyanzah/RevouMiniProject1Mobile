@@ -18,6 +18,9 @@
       "@utils/*": [
         "utils/*"
       ],
+      "@contexts/*": [
+        "contexts/*"
+      ],
     }
   }
 }

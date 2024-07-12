@@ -5,20 +5,13 @@ import {
   MaterialTopTabNavigationOptions,
 } from '@react-navigation/material-top-tabs';
 import React, { useMemo } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet } from 'react-native';
+import Newest from './Newest';
 import Trending from './Trending';
 
 const TopTab = createMaterialTopTabNavigator();
 
-const Newest = () => {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Newest</Text>
-    </View>
-  );
-};
-
-const FeedsTabLayout = () => {
+const HomeTopTab = () => {
   const screenOptions: MaterialTopTabNavigationOptions = useMemo(
     () => ({
       tabBarActiveTintColor: COLORS.primary,
@@ -46,7 +39,7 @@ const FeedsTabLayout = () => {
   );
 };
 
-export default FeedsTabLayout;
+export default HomeTopTab;
 
 const styles = StyleSheet.create({
   tabBarLabel: {

@@ -1,8 +1,12 @@
-import Carousel from '@components/organisms/Carousel';
+import Carousel from '@components/molecules/Carousel';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useMemo } from 'react';
 import { Image, StyleSheet, View } from 'react-native';
+import { RootStackParamList } from 'types/navigation';
 
-const Onboarding = () => {
+const Onboarding = ({
+  navigation,
+}: NativeStackScreenProps<RootStackParamList, 'Onboarding'>) => {
   const carouselItems = useMemo(
     () => [
       {
@@ -36,9 +40,13 @@ const Onboarding = () => {
     [],
   );
 
+  const goToLogin = () => {
+    navigation.navigate('Login');
+  };
+
   return (
     <View style={styles.container}>
-      <Carousel data={carouselItems} />
+      <Carousel data={carouselItems} goToLogin={goToLogin} />
     </View>
   );
 };
