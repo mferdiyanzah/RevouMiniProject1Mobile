@@ -11,7 +11,11 @@ import Trending from './Trending';
 
 const TopTab = createMaterialTopTabNavigator();
 
-const HomeTopTab = () => {
+interface HomeTopTabProps {
+  generateData: () => void;
+}
+
+const HomeTopTab = ({ generateData }: HomeTopTabProps) => {
   const screenOptions: MaterialTopTabNavigationOptions = useMemo(
     () => ({
       tabBarActiveTintColor: COLORS.primary,
@@ -27,12 +31,12 @@ const HomeTopTab = () => {
     <TopTab.Navigator initialRouteName="Trending" screenOptions={screenOptions}>
       <TopTab.Screen
         name="Trending"
-        component={Trending}
+        children={() => <Trending generateData={generateData} />}
         options={{ tabBarLabel: 'Trending' }}
       />
       <TopTab.Screen
         name="Terbaru"
-        component={Newest}
+        children={() => <Newest generateData={generateData} />}
         options={{ tabBarLabel: 'Terbaru' }}
       />
     </TopTab.Navigator>

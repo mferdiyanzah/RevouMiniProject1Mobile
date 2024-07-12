@@ -3,7 +3,11 @@ import { useApp } from '@contexts/app';
 import React, { useMemo } from 'react';
 import { FlatList, View } from 'react-native';
 
-const Newest = () => {
+interface NewestProps {
+  generateData: () => void;
+}
+
+const Newest = ({ generateData }: NewestProps) => {
   const { feedData } = useApp();
 
   const newestData = useMemo(() => {
@@ -21,9 +25,11 @@ const Newest = () => {
             isLastIndex={index === newestData.length - 1}
           />
         )}
+        onRefresh={generateData}
+        refreshing={false}
       />
     </View>
   );
 };
 
-export default Newest;
+export default React.memo(Newest);

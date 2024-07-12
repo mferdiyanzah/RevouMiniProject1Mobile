@@ -3,7 +3,7 @@ import { useApp } from '@contexts/app';
 import React, { useMemo } from 'react';
 import { FlatList, View } from 'react-native';
 
-const Trending = () => {
+const Trending = ({ generateData }: { generateData: () => void }) => {
   const { feedData } = useApp();
 
   const trendingData = useMemo(() => {
@@ -21,9 +21,11 @@ const Trending = () => {
             isLastIndex={index === trendingData.length - 1}
           />
         )}
+        onRefresh={generateData}
+        refreshing={false}
       />
     </View>
   );
 };
 
-export default Trending;
+export default React.memo(Trending);

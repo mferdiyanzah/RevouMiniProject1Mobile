@@ -3,7 +3,7 @@ import HomeHeader from '@components/organisms/HomeHeader';
 import HomeTopTab from '@components/top-tabs/Home';
 import { useApp } from '@contexts/app';
 import { faker } from '@faker-js/faker';
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { IData } from 'types/data';
 
@@ -11,6 +11,12 @@ const HomeTab = () => {
   const { setFeedData } = useApp();
 
   useEffect(() => {
+    generateData();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const generateData = useCallback(() => {
     const data: IData[] = Array.from({ length: 10 }, (_, index) => ({
       id: index,
       avatar: faker.image.urlLoremFlickr({ category: 'people' }),
@@ -27,14 +33,13 @@ const HomeTab = () => {
     }));
 
     setFeedData(data);
+  }, [setFeedData]);
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
   return (
     <View style={styles.container}>
       <HomeHeader />
       <ContentCreationCard />
-      <HomeTopTab />
+      <HomeTopTab generateData={generateData} />
     </View>
   );
 };
