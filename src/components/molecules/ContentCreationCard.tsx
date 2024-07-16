@@ -13,27 +13,29 @@ const ContentCreationCard = () => {
 
   const { navigation } = useHome();
 
-  const checkIsLoggedIn = useCallback(() => {
+  const handleAddQuestion = useCallback(() => {
     if (!isLoggedIn) {
       navigation.navigate('Login');
       return;
     }
+    Alert.alert('Add Question');
   }, [isLoggedIn, navigation]);
 
-  const handleAddQuestion = useCallback(() => {
-    checkIsLoggedIn();
-    Alert.alert('Add Question');
-  }, [checkIsLoggedIn]);
-
   const handleAddPost = useCallback(() => {
-    checkIsLoggedIn();
+    if (!isLoggedIn) {
+      navigation.navigate('Login');
+      return;
+    }
     navigation.navigate('CreatePost');
-  }, [checkIsLoggedIn, navigation]);
+  }, [isLoggedIn, navigation]);
 
   const handleWhatDoYouWantToAsk = useCallback(() => {
-    checkIsLoggedIn();
+    if (!isLoggedIn) {
+      navigation.navigate('Login');
+      return;
+    }
     navigation.navigate('CreatePost');
-  }, [checkIsLoggedIn, navigation]);
+  }, [isLoggedIn, navigation]);
 
   return (
     <View style={styles.container}>
