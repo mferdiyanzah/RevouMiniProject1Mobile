@@ -19,7 +19,7 @@ const Tab = createBottomTabNavigator();
 
 type HomeProps = NativeStackScreenProps<RootStackParamList, 'HomeScreen'>;
 
-const Home = ({ navigation }: HomeProps) => {
+const Home = ({ route, navigation }: HomeProps) => {
   const { isLoggedIn } = useApp();
 
   const goToLogin = useCallback(() => {
@@ -53,7 +53,7 @@ const Home = ({ navigation }: HomeProps) => {
   );
 
   return (
-    <HomeContext.Provider value={{ navigation, data: [] }}>
+    <HomeContext.Provider value={{ navigation, route }}>
       <View style={styles.container}>
         <Tab.Navigator screenOptions={screenOptions}>
           <Tab.Screen name="Home" component={HomeTab} />

@@ -3,7 +3,7 @@ import TYPOGRAPHY from '@constants/typography';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 
-type ButtonVariant = 'primary' | 'outline' | 'tertiary' | 'link';
+type ButtonVariant = 'primary' | 'outline' | 'tertiary' | 'link' | 'custom';
 type IconPosition = 'left' | 'right' | 'only';
 type SizeVariant = 'small' | 'medium' | 'large';
 
@@ -33,6 +33,7 @@ const Button: React.FC<ButtonProps> = ({
     buttonSizeStyles[size],
     buttonVariantStyles[`${variant}-${disabled ? 'disabled' : 'default'}`],
     width === 'full' ? layoutStyles.fullWidth : { width },
+    { gap: variant === 'custom' ? 4 : 8 },
   ];
 
   const textStyle = [
@@ -68,9 +69,8 @@ const baseStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 32,
+    borderRadius: 96,
     height: 'auto',
-    gap: 8,
   },
   text: {
     fontWeight: '700',
@@ -106,6 +106,8 @@ const buttonVariantStyles = StyleSheet.create({
   'tertiary-disabled': { backgroundColor: COLORS.neutral400 },
   'link-default': { backgroundColor: COLORS.transparent },
   'link-disabled': { backgroundColor: COLORS.transparent },
+  'custom-default': {},
+  'custom-disabled': {},
 });
 
 const textVariantStyles = StyleSheet.create({
@@ -117,6 +119,8 @@ const textVariantStyles = StyleSheet.create({
   'tertiary-disabled': { color: COLORS.neutral400 },
   'link-default': { color: COLORS.primary },
   'link-disabled': { color: COLORS.neutral400 },
+  'custom-default': {},
+  'custom-disabled': {},
 });
 
 const layoutStyles = StyleSheet.create({

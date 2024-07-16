@@ -2,7 +2,7 @@ import { createContext, useContext } from 'react';
 
 interface HomeContextType {
   navigation: any;
-  data: any;
+  route: any;
 }
 
 export const HomeContext = createContext<HomeContextType | undefined>(

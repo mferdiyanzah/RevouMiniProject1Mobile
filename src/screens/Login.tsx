@@ -8,6 +8,7 @@ import { Alert, StyleSheet, Text, View } from 'react-native';
 import { RootStackParamList } from 'types/navigation';
 import VALIDATOR from '@utils/validator';
 import { useApp } from '@contexts/app';
+import { CORRECT_EMAIL, CORRECT_PASSWORD } from '@constants/general';
 
 type LoginProps = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
@@ -39,8 +40,13 @@ const Login = ({ navigation }: LoginProps) => {
   };
 
   const handleLogin = () => {
-    setIsLoggedIn(true);
-    navigation.navigate('HomeScreen');
+    if (email === CORRECT_EMAIL && password === CORRECT_PASSWORD) {
+      setIsLoggedIn(true);
+      navigation.navigate('HomeScreen');
+      return;
+    }
+
+    Alert.alert('Email atau password salah');
   };
 
   const goToPreviousScreen = useCallback(() => {
@@ -84,14 +90,14 @@ const Login = ({ navigation }: LoginProps) => {
             }
             errorMessage={passwordErrorMessage}
           />
-          <Button
-            label="Lupa Password?"
-            onPress={() => Alert.alert('Lupa Password?')}
-            variant="link"
-            size="small"
-            width={100}
-          />
         </View>
+        <Button
+          label="Lupa Password?"
+          onPress={() => Alert.alert('Lupa Password?')}
+          variant="link"
+          size="small"
+          width={100}
+        />
       </View>
       <Button
         onPress={handleLogin}

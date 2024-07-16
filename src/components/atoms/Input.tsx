@@ -70,14 +70,14 @@ const Input: React.FC<InputProps> = props => {
           onChangeText={onChangeText}
           onPress={onPress}
         />
-        {type === 'password' && (
+        {type === 'password' ? (
           <Button
             variant="link"
             onPress={() => setShowPassword(!showPassword)}
             icon={<Icon variant={showPassword ? 'eye' : 'eye-off'} size={16} />}
             iconPosition="only"
           />
-        )}
+        ) : null}
       </View>
       {state === 'error' && (
         <Text style={styles.errorLabel}>{errorMessage}</Text>
@@ -100,12 +100,13 @@ const styles = StyleSheet.create({
   },
   inputText: {
     color: COLORS.neutral700,
+    paddingHorizontal: 16,
+    flex: 1,
     ...TYPOGRAPHY.paragraph.medium,
   },
   inputTextContainer: {
     borderWidth: 1,
     borderRadius: 8,
-    paddingHorizontal: 16,
     height: 40,
     flexDirection: 'row',
     justifyContent: 'space-between',

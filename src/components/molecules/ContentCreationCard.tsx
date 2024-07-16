@@ -13,25 +13,27 @@ const ContentCreationCard = () => {
 
   const { navigation } = useHome();
 
-  const goToLogin = useCallback(() => {
-    navigation.navigate('Login');
-  }, [navigation]);
+  const checkIsLoggedIn = useCallback(() => {
+    if (!isLoggedIn) {
+      navigation.navigate('Login');
+      return;
+    }
+  }, [isLoggedIn, navigation]);
 
   const handleAddQuestion = useCallback(() => {
-    if (!isLoggedIn) {
-      goToLogin();
-      return;
-    }
+    checkIsLoggedIn();
     Alert.alert('Add Question');
-  }, [goToLogin, isLoggedIn]);
+  }, [checkIsLoggedIn]);
 
   const handleAddPost = useCallback(() => {
-    if (!isLoggedIn) {
-      goToLogin();
-      return;
-    }
-    Alert.alert('Add Post');
-  }, [goToLogin, isLoggedIn]);
+    checkIsLoggedIn();
+    navigation.navigate('CreatePost');
+  }, [checkIsLoggedIn, navigation]);
+
+  const handleWhatDoYouWantToAsk = useCallback(() => {
+    checkIsLoggedIn();
+    navigation.navigate('CreatePost');
+  }, [checkIsLoggedIn, navigation]);
 
   return (
     <View style={styles.container}>
@@ -43,7 +45,7 @@ const ContentCreationCard = () => {
               variant="primary"
               placeholder="Apa yang ingin kamu tanyakan?"
               state="default"
-              onPress={isLoggedIn ? undefined : goToLogin}
+              onPress={handleWhatDoYouWantToAsk}
             />
           </View>
         </View>

@@ -15,7 +15,11 @@ const ProfileTab = () => {
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [navigation]);
+  }, []);
+
+  if (!isLoggedIn) {
+    return null;
+  }
 
   return (
     <View style={styles.container}>

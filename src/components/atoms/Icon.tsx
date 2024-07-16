@@ -14,6 +14,9 @@ import UpArrowSVG from '@assets/icons/up-arrow.svg';
 import CommentSVG from '@assets/icons/comment.svg';
 import ShareSVG from '@assets/icons/share.svg';
 import EyeOffSVG from '@assets/icons/eye-off.svg';
+import SendSVG from '@assets/icons/send.svg';
+import FileSVG from '@assets/icons/file.svg';
+import ImageSVG from '@assets/icons/image.svg';
 
 type IconVariant =
   | 'bell'
@@ -28,6 +31,10 @@ type IconVariant =
   | 'comment'
   | 'share'
   | 'eye-off'
+  | 'left-arrow'
+  | 'send'
+  | 'file'
+  | 'image'
   | 'love';
 
 interface IconProps extends React.ComponentProps<typeof View> {
@@ -52,6 +59,9 @@ const IconPath = {
   comment: CommentSVG,
   share: ShareSVG,
   'eye-off': EyeOffSVG,
+  send: SendSVG,
+  file: FileSVG,
+  image: ImageSVG,
 };
 
 const Icon = ({ variant, size = 24, style }: IconProps) => {

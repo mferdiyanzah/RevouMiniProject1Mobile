@@ -1,5 +1,5 @@
 import Icon from '@components/atoms/Icon';
-import React from 'react';
+import React, { memo } from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 
 const HomeHeader = () => {
@@ -13,7 +13,7 @@ const HomeHeader = () => {
   );
 };
 
-export default HomeHeader;
+export default memo(HomeHeader);
 
 const styles = StyleSheet.create({
   container: {

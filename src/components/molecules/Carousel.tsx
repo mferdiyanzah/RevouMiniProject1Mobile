@@ -2,15 +2,25 @@ import Button from '@components/atoms/Button';
 import CarouselItem from '@components/atoms/CarouselItem';
 import COLORS from '@constants/colors';
 import React, { useCallback, useRef, useState } from 'react';
-import { FlatList, ListRenderItemInfo, StyleSheet, View } from 'react-native';
+import {
+  FlatList,
+  ListRenderItemInfo,
+  StyleSheet,
+  View,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
+  Dimensions,
+} from 'react-native';
 
 interface CarouselProps {
   data: any;
   goToLogin: () => void;
 }
 
+const { width } = Dimensions.get('window');
+
 const Carousel: React.FC<CarouselProps> = ({ data, goToLogin }) => {
-  const flatListRef = useRef<FlatList<string>>(null);
+  const flatListRef = useRef<FlatList<any>>(null);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
 
   const handleNext = () => {
@@ -32,6 +42,14 @@ const Carousel: React.FC<CarouselProps> = ({ data, goToLogin }) => {
     [],
   );
 
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const contentOffsetX = event.nativeEvent.contentOffset.x;
+    const newIndex = Math.round(contentOffsetX / width);
+    if (newIndex !== currentIndex) {
+      setCurrentIndex(newIndex);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.carouselContainer}>
@@ -41,9 +59,15 @@ const Carousel: React.FC<CarouselProps> = ({ data, goToLogin }) => {
           horizontal
           showsHorizontalScrollIndicator={false}
           pagingEnabled
-          scrollEnabled={false}
+          scrollEnabled={true}
           keyExtractor={(item, index) => index.toString()}
           renderItem={renderCarouselItem}
+          onScroll={handleScroll}
+          getItemLayout={(_, index) => ({
+            length: width,
+            offset: width * index,
+            index,
+          })}
         />
         <View style={styles.dotContainer}>
           {data.map((_: any, index: React.Key | null | undefined) => (
@@ -91,6 +115,7 @@ const styles = StyleSheet.create({
   },
   carouselContainer: {
     flex: 1,
+    width: width,
   },
   buttonContainer: {
     position: 'absolute',

@@ -1,9 +1,9 @@
 import ContentCreationCard from '@components/molecules/ContentCreationCard';
-import HomeHeader from '@components/organisms/HomeHeader';
+import HomeHeader from '@components/molecules/HomeHeader';
 import HomeTopTab from '@components/top-tabs/Home';
 import { useApp } from '@contexts/app';
 import { faker } from '@faker-js/faker';
-import React, { useCallback, useEffect } from 'react';
+import React, { memo, useCallback, useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { IData } from 'types/data';
 
@@ -44,7 +44,7 @@ const HomeTab = () => {
   );
 };
 
-export default HomeTab;
+export default memo(HomeTab);
 
 const styles = StyleSheet.create({
   topTabContainer: {

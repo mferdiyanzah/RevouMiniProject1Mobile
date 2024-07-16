@@ -1,17 +1,20 @@
-import PostContainer from '@components/molecules/PostContainer';
+import PostContainer from '@components/organisms/PostContainer';
 import { useApp } from '@contexts/app';
+import { MaterialTopTabScreenProps } from '@react-navigation/material-top-tabs';
 import React, { useMemo } from 'react';
 import { FlatList, View } from 'react-native';
+import { TopTabHomeParamList } from 'types/navigation';
 
-interface NewestProps {
+type NewestProps = MaterialTopTabScreenProps<TopTabHomeParamList, 'Terbaru'> & {
   generateData: () => void;
-}
+};
 
 const Newest = ({ generateData }: NewestProps) => {
   const { feedData } = useApp();
 
   const newestData = useMemo(() => {
-    return feedData.sort((a, b) => b.time.getTime() - a.time.getTime());
+    const copyFeedData = [...feedData];
+    return copyFeedData.sort((a, b) => b.time.getTime() - a.time.getTime());
   }, [feedData]);
 
   return (

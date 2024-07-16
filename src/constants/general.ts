@@ -3,7 +3,7 @@ const EMAIL_REGEX =
 
 const MAX_EMAIL_LENGTH = 254;
 
-const CORRECT_EMAIL = 'mohammad.ferdiyanzah@test.app';
+const CORRECT_EMAIL = 'ferdiyanzah@test.app';
 
 const CORRECT_PASSWORD = 'TestApp123!';
 

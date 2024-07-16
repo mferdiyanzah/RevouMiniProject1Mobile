@@ -1,13 +1,23 @@
-import PostContainer from '@components/molecules/PostContainer';
+import PostContainer from '@components/organisms/PostContainer';
 import { useApp } from '@contexts/app';
+import { MaterialTopTabScreenProps } from '@react-navigation/material-top-tabs';
 import React, { useMemo } from 'react';
 import { FlatList, View } from 'react-native';
+import { TopTabHomeParamList } from 'types/navigation';
 
-const Trending = ({ generateData }: { generateData: () => void }) => {
+type TrendingProps = MaterialTopTabScreenProps<
+  TopTabHomeParamList,
+  'Trending'
+> & {
+  generateData: () => void;
+};
+
+const Trending = ({ generateData }: TrendingProps) => {
   const { feedData } = useApp();
 
   const trendingData = useMemo(() => {
-    return feedData.sort((a, b) => b.upvotes - a.upvotes);
+    const copyFeedData = [...feedData];
+    return copyFeedData.sort((a, b) => b.upvotes - a.upvotes);
   }, [feedData]);
 
   return (

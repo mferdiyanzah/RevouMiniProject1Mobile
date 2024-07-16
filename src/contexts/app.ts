@@ -6,6 +6,9 @@ interface AppContextType {
   setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
   feedData: IData[];
   setFeedData: React.Dispatch<React.SetStateAction<IData[]>>;
+  selectedPost: IData | null;
+  setSelectedPost: React.Dispatch<React.SetStateAction<IData | null>>;
+  addFeedData: (data: IData) => void;
 }
 
 export const AppContext = createContext<AppContextType | undefined>(undefined);
