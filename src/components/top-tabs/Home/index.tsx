@@ -5,7 +5,7 @@ import {
   MaterialTopTabNavigationOptions,
 } from '@react-navigation/material-top-tabs';
 import React, { useMemo } from 'react';
-import { StyleSheet } from 'react-native';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { TopTabHomeParamList } from 'types/navigation';
 import Newest from './Newest';
 import Trending from './Trending';
@@ -14,9 +14,10 @@ const TopTab = createMaterialTopTabNavigator<TopTabHomeParamList>();
 
 interface HomeTopTabProps {
   generateData: () => void;
+  isLoading: boolean;
 }
 
-const HomeTopTab = ({ generateData }: HomeTopTabProps) => {
+const HomeTopTab = ({ generateData, isLoading }: HomeTopTabProps) => {
   const screenOptions: MaterialTopTabNavigationOptions = useMemo(
     () => ({
       tabBarActiveTintColor: COLORS.primary,
@@ -27,6 +28,15 @@ const HomeTopTab = ({ generateData }: HomeTopTabProps) => {
     }),
     [],
   );
+  console.log('isLoading', isLoading);
+
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={COLORS.primary} />
+      </View>
+    );
+  }
 
   return (
     <TopTab.Navigator screenOptions={screenOptions}>
@@ -63,5 +73,10 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primary,
     borderWidth: 2,
     borderColor: COLORS.primary,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

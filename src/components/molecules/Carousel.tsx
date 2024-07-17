@@ -23,7 +23,7 @@ const Carousel: React.FC<CarouselProps> = ({ data, goToLogin }) => {
   const flatListRef = useRef<FlatList<any>>(null);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     const isLastIndex = currentIndex === data.length - 1;
 
     if (!isLastIndex) {
@@ -33,7 +33,7 @@ const Carousel: React.FC<CarouselProps> = ({ data, goToLogin }) => {
     } else {
       goToLogin();
     }
-  };
+  }, [currentIndex, data.length, goToLogin]);
 
   const renderCarouselItem = useCallback(
     ({ item }: ListRenderItemInfo<any>) => {
@@ -42,13 +42,14 @@ const Carousel: React.FC<CarouselProps> = ({ data, goToLogin }) => {
     [],
   );
 
-  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const contentOffsetX = event.nativeEvent.contentOffset.x;
-    const newIndex = Math.round(contentOffsetX / width);
-    if (newIndex !== currentIndex) {
+  const handleMomentumScrollEnd = useCallback(
+    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      const contentOffsetX = event.nativeEvent.contentOffset.x;
+      const newIndex = Math.round(contentOffsetX / width);
       setCurrentIndex(newIndex);
-    }
-  };
+    },
+    [],
+  );
 
   return (
     <View style={styles.container}>
@@ -59,10 +60,10 @@ const Carousel: React.FC<CarouselProps> = ({ data, goToLogin }) => {
           horizontal
           showsHorizontalScrollIndicator={false}
           pagingEnabled
-          scrollEnabled={true}
+          scrollEnabled={false}
           keyExtractor={(item, index) => index.toString()}
           renderItem={renderCarouselItem}
-          onScroll={handleScroll}
+          onMomentumScrollEnd={handleMomentumScrollEnd}
           getItemLayout={(_, index) => ({
             length: width,
             offset: width * index,
@@ -70,7 +71,7 @@ const Carousel: React.FC<CarouselProps> = ({ data, goToLogin }) => {
           })}
         />
         <View style={styles.dotContainer}>
-          {data.map((_: any, index: React.Key | null | undefined) => (
+          {data.map((_: any, index: any) => (
             <View
               key={index}
               style={

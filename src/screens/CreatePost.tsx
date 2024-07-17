@@ -68,7 +68,7 @@ const CreatePost = ({ navigation }: CreatePostScreenProps) => {
     setDescription(value);
   }, []);
 
-  const isDisabled = useMemo(() => {
+  const isPostButtonDisabled = useMemo(() => {
     return title === '' || description === '' || label === '';
   }, [title, description, label]);
 
@@ -92,7 +92,7 @@ const CreatePost = ({ navigation }: CreatePostScreenProps) => {
             label="Post"
             onPress={handleAddNewData}
             width={60}
-            disabled={isDisabled}
+            disabled={isPostButtonDisabled}
           />
         </View>
       </View>

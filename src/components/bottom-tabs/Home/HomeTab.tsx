@@ -9,6 +9,7 @@ import { IData } from 'types/data';
 
 const HomeTab = () => {
   const { setFeedData } = useApp();
+  const isLoadingRef = React.useRef<boolean>(true);
 
   useEffect(() => {
     generateData();
@@ -17,6 +18,8 @@ const HomeTab = () => {
   }, []);
 
   const generateData = useCallback(() => {
+    console.log('generateData', new Date().toISOString());
+    isLoadingRef.current = true;
     const data: IData[] = Array.from({ length: 10 }, (_, index) => ({
       id: index,
       avatar: faker.image.urlLoremFlickr({ category: 'people' }),
@@ -33,13 +36,18 @@ const HomeTab = () => {
     }));
 
     setFeedData(data);
+    isLoadingRef.current = false;
+    console.log('generateData done', new Date().toISOString());
   }, [setFeedData]);
 
   return (
     <View style={styles.container}>
       <HomeHeader />
       <ContentCreationCard />
-      <HomeTopTab generateData={generateData} />
+      <HomeTopTab
+        generateData={generateData}
+        isLoading={isLoadingRef.current}
+      />
     </View>
   );
 };

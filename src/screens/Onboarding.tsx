@@ -1,7 +1,7 @@
 import Carousel from '@components/molecules/Carousel';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useMemo } from 'react';
-import { Image, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { RootStackParamList } from 'types/navigation';
 
 const Onboarding = ({
@@ -14,27 +14,21 @@ const Onboarding = ({
         title: 'Connect',
         description:
           'Dapatkan akses ke investor profesional terpercaya dan mulai investasi bareng teman dan komunitas',
-        image: (
-          <Image
-            source={require('../assets/images/connect.png')}
-            width={100}
-            height={100}
-          />
-        ),
+        image: require('@assets/images/connect.png'),
       },
       {
         id: 2,
         title: 'Learn',
         description:
           'Dapatkan ide investasi dan informasi terpercaya langsung dari ahlinya biarkamu makin jago dan makin cuan!',
-        image: <Image source={require('../assets/images/learn.png')} />,
+        image: require('@assets/images/learn.png'),
       },
       {
         id: 3,
         title: 'Invest',
         description:
           'Atur portfolio kamu dan langsung berinvestasi dengan mudah dengan beragam pilihan aset',
-        image: <Image source={require('../assets/images/invest.png')} />,
+        image: require('@assets/images/invest.png'),
       },
     ],
     [],

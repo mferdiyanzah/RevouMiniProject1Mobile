@@ -12,3 +12,10 @@ export interface IData {
   comments: number;
   shares: number;
 }
+
+export interface ICarouselItem {
+  id: number;
+  title: string;
+  description: string;
+  image: any;
+}

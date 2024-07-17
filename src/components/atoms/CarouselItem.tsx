@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dimensions, StyleSheet, View } from 'react-native';
+import { Dimensions, Image, StyleSheet, View } from 'react-native';
 import Typography from './Typography';
 
 const { width: windowWidth } = Dimensions.get('window');
@@ -7,13 +7,13 @@ const { width: windowWidth } = Dimensions.get('window');
 interface CarouselItemProps {
   title: string;
   description: string;
-  image: React.ReactNode;
+  image: any;
 }
 
 const CarouselItem = ({ data }: { data: CarouselItemProps }) => {
   return (
     <View style={styles.container}>
-      {data.image}
+      <Image source={data.image} />
       <Typography type="heading" size="xLarge">
         {data.title}
       </Typography>
