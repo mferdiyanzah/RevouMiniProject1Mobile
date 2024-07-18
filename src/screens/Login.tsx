@@ -42,7 +42,10 @@ const Login = ({ navigation }: LoginProps) => {
   const handleLogin = () => {
     if (email === CORRECT_EMAIL && password === CORRECT_PASSWORD) {
       setIsLoggedIn(true);
-      navigation.navigate('HomeScreen');
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'HomeScreen' }],
+      });
       return;
     }
 
