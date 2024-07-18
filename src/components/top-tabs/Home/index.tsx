@@ -28,7 +28,6 @@ const HomeTopTab = ({ generateData, isLoading }: HomeTopTabProps) => {
     }),
     [],
   );
-  console.log('isLoading', isLoading);
 
   if (isLoading) {
     return (

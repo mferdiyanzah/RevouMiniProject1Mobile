@@ -18,7 +18,6 @@ const HomeTab = () => {
   }, []);
 
   const generateData = useCallback(() => {
-    console.log('generateData', new Date().toISOString());
     isLoadingRef.current = true;
     const data: IData[] = Array.from({ length: 10 }, (_, index) => ({
       id: index,
@@ -37,7 +36,6 @@ const HomeTab = () => {
 
     setFeedData(data);
     isLoadingRef.current = false;
-    console.log('generateData done', new Date().toISOString());
   }, [setFeedData]);
 
   return (

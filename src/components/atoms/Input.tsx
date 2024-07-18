@@ -71,12 +71,16 @@ const Input: React.FC<InputProps> = props => {
           onPress={onPress}
         />
         {type === 'password' ? (
-          <Button
-            variant="link"
-            onPress={() => setShowPassword(!showPassword)}
-            icon={<Icon variant={showPassword ? 'eye' : 'eye-off'} size={16} />}
-            iconPosition="only"
-          />
+          <View style={styles.buttonContainer}>
+            <Button
+              variant="link"
+              onPress={() => setShowPassword(!showPassword)}
+              icon={
+                <Icon variant={showPassword ? 'eye' : 'eye-off'} size={20} />
+              }
+              iconPosition="only"
+            />
+          </View>
         ) : null}
       </View>
       {state === 'error' && (
@@ -115,6 +119,9 @@ const styles = StyleSheet.create({
   errorLabel: {
     color: COLORS.red500,
     ...TYPOGRAPHY.paragraph.small,
+  },
+  buttonContainer: {
+    marginEnd: 8,
   },
 });
 
