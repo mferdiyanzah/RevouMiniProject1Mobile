@@ -19,7 +19,7 @@ const HomeTab = () => {
 
   const generateData = useCallback(() => {
     isLoadingRef.current = true;
-    const data: IData[] = Array.from({ length: 10 }, (_, index) => ({
+    const data: IData[] = Array.from({ length: 100 }, (_, index) => ({
       id: index,
       avatar: faker.image.urlLoremFlickr({ category: 'people' }),
       name: faker.person.fullName(),
@@ -28,10 +28,10 @@ const HomeTab = () => {
       title: faker.lorem.sentence(),
       description: faker.word.words({ count: { min: 10, max: 200 } }),
       label: faker.word.noun(),
-      upvotes: faker.number.int(1000),
-      downvotes: faker.number.int(1000),
-      comments: faker.number.int(1000),
-      shares: faker.number.int(1000),
+      upvotes: faker.number.int(10000),
+      downvotes: faker.number.int(10000),
+      comments: faker.number.int(10000),
+      shares: faker.number.int(10000),
     }));
 
     setFeedData(data);

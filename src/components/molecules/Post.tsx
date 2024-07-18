@@ -3,7 +3,7 @@ import COLORS from '@constants/colors';
 import TYPOGRAPHY from '@constants/typography';
 import { useApp } from '@contexts/app';
 import React, { useCallback, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { IData } from 'types/data';
 import PostHeader from './PostHeader';
 import ActionPostButton from './ActionPostButton';
@@ -47,7 +47,9 @@ const Post = ({ data, navigation, isDetail = false }: PostProps) => {
         ? data.description
         : getTruncatedText(data.description, descriptionLimit);
 
-    const toggleText = showFullDescription ? 'Read Less' : 'Baca lebih lanjut';
+    const toggleText = showFullDescription
+      ? ' Baca lebih sedikit'
+      : 'Baca lebih lanjut';
 
     return (
       <>
@@ -70,15 +72,13 @@ const Post = ({ data, navigation, isDetail = false }: PostProps) => {
   return (
     <View style={styles.container}>
       <PostHeader data={data} navigation={navigation} />
-      <View style={styles.postDetailContainer}>
+      <TouchableOpacity style={styles.postDetailContainer} onPress={goToDetail}>
         <Text style={styles.postTitle}>{data.title}</Text>
-        <Text style={styles.postDescription} onPress={goToDetail}>
-          {renderDescription()}
-        </Text>
+        <Text style={styles.postDescription}>{renderDescription()}</Text>
         <View>
           <Label label={data.label} variant="tertiary" color="green" />
         </View>
-      </View>
+      </TouchableOpacity>
       <View style={styles.ctaContainer}>
         <ActionPostButton
           upvotes={data.upvotes}

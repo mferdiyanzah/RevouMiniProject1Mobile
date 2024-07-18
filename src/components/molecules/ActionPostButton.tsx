@@ -45,6 +45,28 @@ const ActionPostButton = ({
     }
   }, [isLoggedIn, navigation]);
 
+  // value will get K, M, B, T, etc. if it's more than 1000
+  const formatNumberWithSuffix = useCallback((initialValue: number) => {
+    if (initialValue < 1000) {
+      return initialValue.toString();
+    }
+
+    const suffixes = ['', 'K', 'M', 'B', 'T'];
+    const suffixNum = Math.floor(('' + initialValue).length / 3);
+    let shortValue = parseFloat(
+      (suffixNum !== 0
+        ? initialValue / Math.pow(1000, suffixNum)
+        : initialValue
+      ).toPrecision(2),
+    );
+
+    if (shortValue % 1 !== 0) {
+      shortValue = parseFloat(shortValue.toFixed(1));
+    }
+
+    return shortValue + suffixes[suffixNum];
+  }, []);
+
   return (
     <View style={styles.container}>
       <View style={styles.buttonContainer}>
@@ -56,7 +78,7 @@ const ActionPostButton = ({
               onPress={handleClick}
               icon={<Icon variant="up-arrow" size={16} />}
               iconPosition="left"
-              label={upvotes.toString()}
+              label={formatNumberWithSuffix(upvotes)}
             />
             <View style={styles.divider} />
             <Button
@@ -67,7 +89,7 @@ const ActionPostButton = ({
                 <Icon variant="up-arrow" size={16} style={styles.downArrow} />
               }
               iconPosition="left"
-              label={downvotes.toString()}
+              label={formatNumberWithSuffix(downvotes)}
             />
           </View>
         ) : (
@@ -77,7 +99,7 @@ const ActionPostButton = ({
             onPress={handleClick}
             icon={<Icon variant={iconVariant} size={16} />}
             iconPosition="left"
-            label={value.toString()}
+            label={formatNumberWithSuffix(value)}
           />
         )}
       </View>
