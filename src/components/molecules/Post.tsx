@@ -7,6 +7,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { IData } from 'types/data';
 import PostHeader from './PostHeader';
 import ActionPostButton from './ActionPostButton';
+import Typography from '@components/atoms/Typography';
 
 interface PostProps {
   data: IData;
@@ -15,7 +16,7 @@ interface PostProps {
 }
 
 const Post = ({ data, navigation, isDetail = false }: PostProps) => {
-  const { setSelectedPost } = useApp();
+  const { setSelectedPost, isLoggedIn } = useApp();
 
   const [showFullDescription, setShowFullDescription] = useState(false);
 
@@ -33,13 +34,14 @@ const Post = ({ data, navigation, isDetail = false }: PostProps) => {
   const descriptionLimit = 230;
 
   const goToDetail = useCallback(() => {
-    if (isDetail) {
+    if (!isLoggedIn) {
+      navigation.navigate('Login');
       return;
     }
 
     setSelectedPost(data);
     navigation.navigate('DetailPost');
-  }, [data, navigation, setSelectedPost, isDetail]);
+  }, [isLoggedIn, setSelectedPost, data, navigation]);
 
   const renderDescription = useCallback(() => {
     const descriptionContent =
@@ -53,11 +55,13 @@ const Post = ({ data, navigation, isDetail = false }: PostProps) => {
 
     return (
       <>
-        <Text style={styles.postDescription}>{descriptionContent}</Text>
+        <Typography style={styles.postDescription}>
+          {descriptionContent}
+        </Typography>
         {!isDetail && data.description.length > descriptionLimit && (
-          <Text onPress={toggleDescription} style={styles.readMore}>
+          <Typography onPress={toggleDescription} style={styles.readMore}>
             {toggleText}
-          </Text>
+          </Typography>
         )}
       </>
     );

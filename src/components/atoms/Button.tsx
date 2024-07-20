@@ -1,7 +1,14 @@
-import COLORS from '@constants/colors';
-import TYPOGRAPHY from '@constants/typography';
+import colors from '@constants/colors';
+import typography from '@constants/typography';
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+import {
+  StyleProp,
+  StyleSheet,
+  TextStyle,
+  TouchableOpacity,
+} from 'react-native';
+import Typography from './Typography';
+import { capitalizeFirstLetter } from '@utils/string';
 
 type ButtonVariant = 'primary' | 'outline' | 'tertiary' | 'link' | 'custom';
 type IconPosition = 'left' | 'right' | 'only';
@@ -16,6 +23,7 @@ interface ButtonProps {
   disabled?: boolean;
   size?: SizeVariant;
   width?: number | 'full';
+  labelStyle?: StyleProp<TextStyle>;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -27,28 +35,36 @@ const Button: React.FC<ButtonProps> = ({
   disabled = false,
   size = 'medium',
   width,
+  labelStyle,
 }) => {
   const buttonStyle = [
-    baseStyles.button,
-    buttonSizeStyles[size],
-    buttonVariantStyles[`${variant}-${disabled ? 'disabled' : 'default'}`],
-    width === 'full' ? layoutStyles.fullWidth : { width },
+    styles.button,
+    styles[`button${capitalizeFirstLetter(size)}` as keyof typeof styles],
+    styles[
+      `button${capitalizeFirstLetter(variant)}${
+        disabled ? 'Disabled' : ''
+      }` as keyof typeof styles
+    ],
+    width === 'full' ? styles.fullWidth : { width },
     { gap: variant === 'custom' ? 4 : 8 },
   ];
 
   const textStyle = [
-    baseStyles.text,
-    textSizeStyles[size],
-    textVariantStyles[`${variant}-${disabled ? 'disabled' : 'default'}`],
+    styles.text,
+    styles[`text${capitalizeFirstLetter(size)}` as keyof typeof styles],
+    styles[
+      `text${capitalizeFirstLetter(variant)}${
+        disabled ? 'Disabled' : ''
+      }` as keyof typeof styles
+    ],
+    labelStyle,
   ];
 
   const renderIcon = () => {
     if (!icon) {
       return null;
     }
-
     const iconStyle = [icon.props.style];
-
     return React.cloneElement(icon, { style: iconStyle });
   };
 
@@ -56,7 +72,7 @@ const Button: React.FC<ButtonProps> = ({
     <TouchableOpacity style={buttonStyle} onPress={onPress} disabled={disabled}>
       {iconPosition === 'left' && renderIcon()}
       {iconPosition !== 'only' && label && (
-        <Text style={textStyle}>{label}</Text>
+        <Typography style={textStyle}>{label}</Typography>
       )}
       {iconPosition === 'right' && renderIcon()}
       {iconPosition === 'only' && renderIcon()}
@@ -64,7 +80,7 @@ const Button: React.FC<ButtonProps> = ({
   );
 };
 
-const baseStyles = StyleSheet.create({
+const styles = StyleSheet.create({
   button: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -75,55 +91,40 @@ const baseStyles = StyleSheet.create({
   text: {
     fontWeight: '700',
   },
-});
-
-const buttonSizeStyles = StyleSheet.create({
-  small: { height: 32 },
-  medium: { height: 40 },
-  large: { height: 48 },
-});
-
-const textSizeStyles = StyleSheet.create({
-  small: { ...TYPOGRAPHY.heading.xSmall },
-  medium: { ...TYPOGRAPHY.heading.small },
-  large: { ...TYPOGRAPHY.heading.medium },
-});
-
-const buttonVariantStyles = StyleSheet.create({
-  'primary-default': { backgroundColor: COLORS.primary },
-  'primary-disabled': { backgroundColor: COLORS.neutral400 },
-  'outline-default': {
-    backgroundColor: COLORS.transparent,
+  buttonSmall: { height: 32 },
+  buttonMedium: { height: 40 },
+  buttonLarge: { height: 48 },
+  textSmall: { ...typography.heading.xSmall },
+  textMedium: { ...typography.heading.small },
+  textLarge: { ...typography.heading.medium },
+  buttonPrimary: { backgroundColor: colors.primary },
+  buttonPrimaryDisabled: { backgroundColor: colors.neutral400 },
+  buttonOutline: {
+    backgroundColor: colors.transparent,
     borderWidth: 1,
-    borderColor: COLORS.primary,
+    borderColor: colors.primary,
   },
-  'outline-disabled': {
-    backgroundColor: COLORS.transparent,
+  buttonOutlineDisabled: {
+    backgroundColor: colors.transparent,
     borderWidth: 1,
-    borderColor: COLORS.neutral400,
+    borderColor: colors.neutral400,
   },
-  'tertiary-default': { backgroundColor: COLORS.secondary },
-  'tertiary-disabled': { backgroundColor: COLORS.neutral400 },
-  'link-default': { backgroundColor: COLORS.transparent },
-  'link-disabled': { backgroundColor: COLORS.transparent },
-  'custom-default': {},
-  'custom-disabled': {},
-});
-
-const textVariantStyles = StyleSheet.create({
-  'primary-default': { color: COLORS.light },
-  'primary-disabled': { color: COLORS.neutral100 },
-  'outline-default': { color: COLORS.primary },
-  'outline-disabled': { color: COLORS.neutral400 },
-  'tertiary-default': { color: COLORS.primary },
-  'tertiary-disabled': { color: COLORS.neutral400 },
-  'link-default': { color: COLORS.primary },
-  'link-disabled': { color: COLORS.neutral400 },
-  'custom-default': {},
-  'custom-disabled': {},
-});
-
-const layoutStyles = StyleSheet.create({
+  buttonTertiary: { backgroundColor: colors.secondary },
+  buttonTertiaryDisabled: { backgroundColor: colors.neutral400 },
+  buttonLink: { backgroundColor: colors.transparent },
+  buttonLinkDisabled: { backgroundColor: colors.transparent },
+  buttonCustom: {},
+  buttonCustomDisabled: {},
+  textPrimary: { color: colors.light },
+  textPrimaryDisabled: { color: colors.neutral100 },
+  textOutline: { color: colors.primary },
+  textOutlineDisabled: { color: colors.neutral400 },
+  textTertiary: { color: colors.primary },
+  textTertiaryDisabled: { color: colors.neutral400 },
+  textLink: { color: colors.primary },
+  textLinkDisabled: { color: colors.neutral400 },
+  textCustom: {},
+  textCustomDisabled: {},
   fullWidth: { alignSelf: 'stretch' },
 });
 

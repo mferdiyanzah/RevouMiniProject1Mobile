@@ -45,7 +45,6 @@ const ActionPostButton = ({
     }
   }, [isLoggedIn, navigation]);
 
-  // value will get K, M, B, T, etc. if it's more than 1000
   const formatNumberWithSuffix = useCallback((initialValue: number) => {
     if (initialValue < 1000) {
       return initialValue.toString();
@@ -79,6 +78,7 @@ const ActionPostButton = ({
               icon={<Icon variant="up-arrow" size={16} />}
               iconPosition="left"
               label={formatNumberWithSuffix(upvotes)}
+              labelStyle={styles.value}
             />
             <View style={styles.divider} />
             <Button
@@ -90,6 +90,7 @@ const ActionPostButton = ({
               }
               iconPosition="left"
               label={formatNumberWithSuffix(downvotes)}
+              labelStyle={styles.value}
             />
           </View>
         ) : (
@@ -100,6 +101,7 @@ const ActionPostButton = ({
             icon={<Icon variant={iconVariant} size={16} />}
             iconPosition="left"
             label={formatNumberWithSuffix(value)}
+            labelStyle={styles.value}
           />
         )}
       </View>
@@ -130,9 +132,11 @@ const styles = StyleSheet.create({
   },
   downArrow: {
     transform: [{ rotate: '180deg' }],
+    color: COLORS.neutral700,
   },
   value: {
     ...TYPOGRAPHY.paragraph.small,
+    color: COLORS.neutral700,
   },
   divider: {
     borderWidth: 1,

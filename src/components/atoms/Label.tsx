@@ -1,7 +1,8 @@
-import COLORS from '@constants/colors';
+import colors from '@constants/colors';
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, ViewStyle, TextStyle } from 'react-native';
 import Typography from './Typography';
+import { capitalizeFirstLetter } from '@utils/string';
 
 type Variant = 'primary' | 'secondary' | 'tertiary';
 type Color = 'neutral' | 'red' | 'green' | 'purple' | 'blue';
@@ -13,13 +14,12 @@ interface LabelProps {
 }
 
 const Label = ({ variant, color, label }: LabelProps) => {
-  const backgroundColor = () => {
-    return backgroundColorStyles[`${variant}-${color}`];
+  const getBackgroundColor = () => {
+    return backgroundStyles[`${variant}${capitalizeFirstLetter(color)}`];
   };
 
-  const containerStyle = [styles.container, backgroundColor()];
-
-  const textStyle = [colorStyles[color]];
+  const containerStyle = [styles.container, getBackgroundColor()];
+  const textStyle = [textStyles[color]];
 
   return (
     <View style={containerStyle}>
@@ -30,8 +30,6 @@ const Label = ({ variant, color, label }: LabelProps) => {
   );
 };
 
-export default Label;
-
 const styles = StyleSheet.create({
   container: {
     paddingVertical: 4,
@@ -41,68 +39,70 @@ const styles = StyleSheet.create({
   },
 });
 
-const backgroundColorStyles = StyleSheet.create({
-  'primary-purple': {
-    backgroundColor: COLORS.primary,
+const backgroundStyles: { [key: string]: ViewStyle } = StyleSheet.create({
+  primaryPurple: {
+    backgroundColor: colors.primary,
   },
-  'primary-blue': {
-    backgroundColor: COLORS.blue400,
+  primaryBlue: {
+    backgroundColor: colors.blue400,
   },
-  'primary-neutral': {
-    backgroundColor: COLORS.neutral700,
+  primaryNeutral: {
+    backgroundColor: colors.neutral700,
   },
-  'primary-green': {
-    backgroundColor: COLORS.green400,
+  primaryGreen: {
+    backgroundColor: colors.green400,
   },
-  'primary-red': {
-    backgroundColor: COLORS.red400,
+  primaryRed: {
+    backgroundColor: colors.red400,
   },
-  'secondary-green': {
-    backgroundColor: COLORS.green200,
+  secondaryGreen: {
+    backgroundColor: colors.green200,
   },
-  'secondary-red': {
-    backgroundColor: COLORS.red200,
+  secondaryRed: {
+    backgroundColor: colors.red200,
   },
-  'secondary-purple': {
-    backgroundColor: COLORS.purple200,
+  secondaryPurple: {
+    backgroundColor: colors.purple200,
   },
-  'secondary-blue': {
-    backgroundColor: COLORS.blue200,
+  secondaryBlue: {
+    backgroundColor: colors.blue200,
   },
-  'secondary-neutral': {
-    backgroundColor: COLORS.neutral200,
+  secondaryNeutral: {
+    backgroundColor: colors.neutral200,
   },
-  'tertiary-green': {
-    backgroundColor: COLORS.green100,
+  tertiaryGreen: {
+    backgroundColor: colors.green100,
   },
-  'tertiary-red': {
-    backgroundColor: COLORS.red100,
+  tertiaryRed: {
+    backgroundColor: colors.red100,
   },
-  'tertiary-purple': {
-    backgroundColor: COLORS.purple100,
+  tertiaryPurple: {
+    backgroundColor: colors.purple100,
   },
-  'tertiary-blue': {
-    backgroundColor: COLORS.blue100,
+  tertiaryBlue: {
+    backgroundColor: colors.blue100,
   },
-  'tertiary-neutral': {
-    backgroundColor: COLORS.neutral100,
+  tertiaryNeutral: {
+    backgroundColor: colors.neutral100,
   },
 });
 
-const colorStyles = StyleSheet.create({
+const textStyles: { [key: string]: TextStyle } = StyleSheet.create({
   neutral: {
-    color: COLORS.neutral700,
+    color: colors.neutral700,
   },
   red: {
-    color: COLORS.red500,
+    color: colors.red500,
   },
   green: {
-    color: COLORS.green600,
+    color: colors.green600,
   },
   purple: {
-    color: COLORS.purple500,
+    color: colors.purple500,
   },
   blue: {
-    color: COLORS.blue500,
+    color: colors.blue500,
   },
 });
+
+export default Label;

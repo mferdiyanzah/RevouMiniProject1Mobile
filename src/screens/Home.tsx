@@ -80,8 +80,9 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.purple100,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    // justifyContent: 'center',
     gap: 12,
+    paddingLeft: 16,
   },
   promoTextContainer: {
     flexDirection: 'row',

@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react';
-import { useHome } from '@contexts/home';
-import { Image, StyleSheet, Text, View } from 'react-native';
-import TYPOGRAPHY from '@constants/typography';
+import Typography from '@components/atoms/Typography';
 import COLORS from '@constants/colors';
+import TYPOGRAPHY from '@constants/typography';
 import { useApp } from '@contexts/app';
+import { useHome } from '@contexts/home';
+import React, { useEffect } from 'react';
+import { Image, StyleSheet, View } from 'react-native';
 
 const ProfileTab = () => {
   const { isLoggedIn } = useApp();
@@ -24,7 +25,7 @@ const ProfileTab = () => {
   return (
     <View style={styles.container}>
       <Image source={require('@assets/images/coming-soon.png')} />
-      <Text style={styles.comingSoontText}>Coming Soon</Text>
+      <Typography style={styles.comingSoontText}>Coming Soon</Typography>
     </View>
   );
 };

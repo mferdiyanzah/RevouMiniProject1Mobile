@@ -54,22 +54,24 @@ const ContentCreationCard = () => {
         <View style={styles.actionButtonContainer}>
           <View style={styles.addQuestionContainer}>
             <Button
-              variant="link"
+              variant="custom"
               size="small"
               label="Pertanyaan"
               icon={<Icon variant="question" />}
               iconPosition="left"
               onPress={handleAddQuestion}
+              labelStyle={styles.buttonLabel}
             />
           </View>
           <View style={styles.addPostContainer}>
             <Button
-              variant="link"
+              variant="custom"
               size="small"
               label="Post"
               icon={<Icon variant="plus" />}
               iconPosition="left"
               onPress={handleAddPost}
+              labelStyle={styles.buttonLabel}
             />
           </View>
         </View>
@@ -111,5 +113,8 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRightWidth: 1,
     borderRightColor: COLORS.gray,
+  },
+  buttonLabel: {
+    color: COLORS.neutral700,
   },
 });

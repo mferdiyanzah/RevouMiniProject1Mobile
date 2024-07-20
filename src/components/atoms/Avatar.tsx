@@ -1,5 +1,6 @@
+import { FALLBACK_IMAGE } from '@constants/general';
 import { useApp } from '@contexts/app';
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 
 interface AvatarProps {
@@ -15,15 +16,18 @@ const Avatar = ({ image }: AvatarProps) => {
   const { isLoggedIn } = useApp();
 
   const [hasError, setHasError] = useState(false);
-  const fallbackUrl = 'https://via.placeholder.com/150';
 
   const imageSource = useMemo(() => {
     if (image) {
-      return hasError ? fallbackUrl : image;
+      return hasError ? FALLBACK_IMAGE : image;
     }
 
     return isLoggedIn ? images.revou : images.default;
   }, [image, isLoggedIn, hasError]);
+
+  const onError = useCallback(() => {
+    setHasError(true);
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -31,7 +35,7 @@ const Avatar = ({ image }: AvatarProps) => {
         style={styles.avatarContainer}
         source={image ? { uri: imageSource } : imageSource}
         resizeMode="cover"
-        onError={() => setHasError(true)}
+        onError={onError}
       />
     </View>
   );

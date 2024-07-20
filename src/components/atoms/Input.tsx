@@ -1,9 +1,10 @@
 import COLORS from '@constants/colors';
 import TYPOGRAPHY from '@constants/typography';
 import React, { useMemo, useState } from 'react';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, TextInput, View } from 'react-native';
 import Button from './Button';
 import Icon from './Icon';
+import Typography from './Typography';
 
 type InputType = 'text' | 'password' | 'email' | 'number';
 type InputVariant = 'primary' | 'secondary' | 'tertiary';
@@ -56,7 +57,7 @@ const Input: React.FC<InputProps> = props => {
     <View style={styles.container}>
       {label && (
         <View>
-          <Text style={styles.labelContainer}>{label}</Text>
+          <Typography style={styles.labelContainer}>{label}</Typography>
         </View>
       )}
       <View style={textInputStyles}>
@@ -84,7 +85,7 @@ const Input: React.FC<InputProps> = props => {
         ) : null}
       </View>
       {state === 'error' && (
-        <Text style={styles.errorLabel}>{errorMessage}</Text>
+        <Typography style={styles.errorLabel}>{errorMessage}</Typography>
       )}
     </View>
   );

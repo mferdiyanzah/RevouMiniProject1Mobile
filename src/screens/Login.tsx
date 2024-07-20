@@ -1,14 +1,14 @@
 import Button from '@components/atoms/Button';
 import Input from '@components/atoms/Input';
 import LoginHeader from '@components/organisms/LoginHeader';
+import { CORRECT_EMAIL, CORRECT_PASSWORD } from '@constants/general';
 import TYPOGRAPHY from '@constants/typography';
+import { useApp } from '@contexts/app';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import React, { useCallback, useEffect, useState } from 'react';
+import VALIDATOR from '@utils/validator';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Alert, StyleSheet, Text, View } from 'react-native';
 import { RootStackParamList } from 'types/navigation';
-import VALIDATOR from '@utils/validator';
-import { useApp } from '@contexts/app';
-import { CORRECT_EMAIL, CORRECT_PASSWORD } from '@constants/general';
 
 type LoginProps = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
@@ -32,7 +32,8 @@ const Login = ({ navigation }: LoginProps) => {
   }, [password]);
 
   const handleEmailChange = (value: string) => {
-    setEmail(value);
+    const formattedEmail = value.toLowerCase();
+    setEmail(formattedEmail);
   };
 
   const handleSkip = () => {
@@ -56,6 +57,22 @@ const Login = ({ navigation }: LoginProps) => {
     navigation.goBack();
   }, [navigation]);
 
+  const emailState = useMemo(() => {
+    return email ? (emailErrorMessage === '' ? 'success' : 'error') : 'default';
+  }, [email, emailErrorMessage]);
+
+  const passwordState = useMemo(() => {
+    return password
+      ? passwordErrorMessage === ''
+        ? 'success'
+        : 'error'
+      : 'default';
+  }, [password, passwordErrorMessage]);
+
+  const isLoginButtonDisabled = useMemo(() => {
+    return emailErrorMessage !== '' || passwordErrorMessage !== '';
+  }, [emailErrorMessage, passwordErrorMessage]);
+
   return (
     <View style={styles.container}>
       <LoginHeader
@@ -72,9 +89,7 @@ const Login = ({ navigation }: LoginProps) => {
           value={email}
           label="Email"
           onChangeText={handleEmailChange}
-          state={
-            email ? (emailErrorMessage === '' ? 'success' : 'error') : 'default'
-          }
+          state={emailState}
           errorMessage={emailErrorMessage}
         />
         <View>
@@ -83,14 +98,8 @@ const Login = ({ navigation }: LoginProps) => {
             placeholder="Password"
             value=""
             label="Password"
-            onChangeText={value => setPassword(value)}
-            state={
-              password
-                ? passwordErrorMessage === ''
-                  ? 'success'
-                  : 'error'
-                : 'default'
-            }
+            onChangeText={setPassword}
+            state={passwordState}
             errorMessage={passwordErrorMessage}
           />
         </View>
@@ -108,7 +117,7 @@ const Login = ({ navigation }: LoginProps) => {
         label="Masuk"
         variant="primary"
         size="medium"
-        disabled={emailErrorMessage !== '' || passwordErrorMessage !== ''}
+        disabled={isLoginButtonDisabled}
       />
     </View>
   );

@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
     width: '42%',
     marginHorizontal: 16,
     backgroundColor: COLORS.primary,
-    borderWidth: 2,
+    borderWidth: 1,
     borderColor: COLORS.primary,
   },
   loadingContainer: {
