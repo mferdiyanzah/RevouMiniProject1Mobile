@@ -37,7 +37,6 @@ export default LoginHeader;
 
 const loginHeaderStyles = StyleSheet.create({
   container: {
-    flex: 1,
     alignItems: 'center',
     flexDirection: 'row',
     width: '100%',

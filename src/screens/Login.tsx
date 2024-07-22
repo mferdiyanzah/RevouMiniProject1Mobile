@@ -43,10 +43,7 @@ const Login = ({ navigation }: LoginProps) => {
   const handleLogin = () => {
     if (email === CORRECT_EMAIL && password === CORRECT_PASSWORD) {
       setIsLoggedIn(true);
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'HomeScreen' }],
-      });
+      navigation.navigate('HomeScreen');
       return;
     }
 
@@ -92,17 +89,17 @@ const Login = ({ navigation }: LoginProps) => {
           state={emailState}
           errorMessage={emailErrorMessage}
         />
-        <View>
-          <Input
-            type="password"
-            placeholder="Password"
-            value=""
-            label="Password"
-            onChangeText={setPassword}
-            state={passwordState}
-            errorMessage={passwordErrorMessage}
-          />
-        </View>
+        <Input
+          type="password"
+          placeholder="Password"
+          value=""
+          label="Password"
+          onChangeText={setPassword}
+          state={passwordState}
+          errorMessage={passwordErrorMessage}
+        />
+      </View>
+      <View style={styles.forgetPasswordAndCtaContainer}>
         <Button
           label="Lupa Password?"
           onPress={() => Alert.alert('Lupa Password?')}
@@ -110,15 +107,24 @@ const Login = ({ navigation }: LoginProps) => {
           size="small"
           width={100}
         />
+        <Button
+          onPress={handleLogin}
+          width="full"
+          label="Masuk"
+          variant="primary"
+          size="medium"
+          disabled={isLoginButtonDisabled}
+        />
       </View>
-      <Button
-        onPress={handleLogin}
-        width="full"
-        label="Masuk"
-        variant="primary"
-        size="medium"
-        disabled={isLoginButtonDisabled}
-      />
+      <View style={styles.registerContainer}>
+        <Button
+          onPress={handleSkip}
+          width="full"
+          label="Daftar"
+          variant="outline"
+          size="medium"
+        />
+      </View>
     </View>
   );
 };
@@ -128,23 +134,32 @@ export default Login;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'white',
     padding: 16,
   },
   formContainer: {
     marginTop: 32,
-    flex: 12,
-    gap: 20,
+    marginBottom: 16,
+    gap: 24,
     width: '100%',
   },
   formTitleContainer: {
-    flex: 1,
     marginTop: 24,
   },
   formTitle: {
     color: 'black',
     ...TYPOGRAPHY.heading.xLarge,
+  },
+  forgetPasswordAndCtaContainer: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    width: '100%',
+    gap: 24,
+  },
+  registerContainer: {
+    flex: 1,
+    width: '100%',
+    justifyContent: 'flex-end',
   },
 });
