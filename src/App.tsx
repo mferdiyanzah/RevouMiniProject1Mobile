@@ -9,8 +9,12 @@ import { RootStackParamList } from 'types/navigation';
 import Home from './screens/Home';
 import Login from './screens/Login';
 import Onboarding from './screens/Onboarding';
+import Register from '@screens/Register';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
+
+const queryClient = new QueryClient();
 
 const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -41,52 +45,62 @@ const AppProvider = ({ children }: { children: React.ReactNode }) => {
 
 function App(): React.JSX.Element {
   return (
-    <AppProvider>
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="Onboarding">
-          <Stack.Screen
-            name="Onboarding"
-            component={Onboarding}
-            options={{
-              title: 'Onboarding',
-              headerShown: false,
-            }}
-          />
-          <Stack.Screen
-            name="Login"
-            component={Login}
-            options={{
-              title: 'Login',
-              headerShown: false,
-            }}
-          />
-          <Stack.Screen
-            name="HomeScreen"
-            component={Home}
-            options={{
-              title: 'Home',
-              headerShown: false,
-            }}
-          />
-          <Stack.Screen
-            name="DetailPost"
-            component={DetailPost}
-            options={{
-              title: 'Detail',
-              headerShown: false,
-            }}
-          />
-          <Stack.Screen
-            name="CreatePost"
-            component={CreatePost}
-            options={{
-              title: 'Create Post',
-              headerShown: false,
-            }}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </AppProvider>
+    <QueryClientProvider client={queryClient}>
+      <AppProvider>
+        <NavigationContainer>
+          <Stack.Navigator initialRouteName="Onboarding">
+            <Stack.Screen
+              name="Onboarding"
+              component={Onboarding}
+              options={{
+                title: 'Onboarding',
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="Login"
+              component={Login}
+              options={{
+                title: 'Login',
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="HomeScreen"
+              component={Home}
+              options={{
+                title: 'Home',
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="DetailPost"
+              component={DetailPost}
+              options={{
+                title: 'Detail',
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="CreatePost"
+              component={CreatePost}
+              options={{
+                title: 'Create Post',
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="Register"
+              component={Register}
+              options={{
+                title: 'Register',
+                headerShown: false,
+              }}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </AppProvider>
+    </QueryClientProvider>
   );
 }
 

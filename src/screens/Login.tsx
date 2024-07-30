@@ -1,19 +1,19 @@
 import Button from '@components/atoms/Button';
 import Input from '@components/atoms/Input';
-import LoginHeader from '@components/organisms/LoginHeader';
-import { CORRECT_EMAIL, CORRECT_PASSWORD } from '@constants/general';
+import Typography from '@components/atoms/Typography';
+import AuthHeader from '@components/organisms/AuthHeader';
 import TYPOGRAPHY from '@constants/typography';
-import { useApp } from '@contexts/app';
+import useLogin from '@hooks/mutations/useLogin';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import VALIDATOR from '@utils/validator';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Alert, StyleSheet, Text, View } from 'react-native';
+import { Alert, StyleSheet, View } from 'react-native';
 import { RootStackParamList } from 'types/navigation';
 
 type LoginProps = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
 const Login = ({ navigation }: LoginProps) => {
-  const { setIsLoggedIn } = useApp();
+  const { mutate: onLogin, isPending: isLoginProcess, data } = useLogin();
 
   const [email, setEmail] = useState<string>('');
   const [emailErrorMessage, setEmailErrorMessage] = useState<string>('');
@@ -40,12 +40,14 @@ const Login = ({ navigation }: LoginProps) => {
     navigation.navigate('HomeScreen');
   };
 
-  const handleLogin = () => {
-    if (email === CORRECT_EMAIL && password === CORRECT_PASSWORD) {
-      setIsLoggedIn(true);
-      navigation.navigate('HomeScreen');
-      return;
-    }
+  const handleLogin = async () => {
+    onLogin({ email, password });
+    console.log(data, 'testtt');
+    // if (email === CORRECT_EMAIL && password === CORRECT_PASSWORD) {
+    //   setIsLoggedIn(true);
+    //   navigation.navigate('HomeScreen');
+    //   return;
+    // }
 
     Alert.alert('Email atau password salah');
   };
@@ -70,14 +72,19 @@ const Login = ({ navigation }: LoginProps) => {
     return emailErrorMessage !== '' || passwordErrorMessage !== '';
   }, [emailErrorMessage, passwordErrorMessage]);
 
+  const goToRegister = useCallback(() => {
+    navigation.navigate('Register');
+  }, [navigation]);
+
   return (
     <View style={styles.container}>
-      <LoginHeader
-        onSkip={handleSkip}
+      <AuthHeader
+        rightAction={handleSkip}
+        rightActionLabel="Lewati"
         goToPreviousScreen={goToPreviousScreen}
       />
       <View style={styles.formTitleContainer}>
-        <Text style={styles.formTitle}>Masuk ke Investly</Text>
+        <Typography style={styles.formTitle}>Masuk ke Investly</Typography>
       </View>
       <View style={styles.formContainer}>
         <Input
@@ -92,7 +99,7 @@ const Login = ({ navigation }: LoginProps) => {
         <Input
           type="password"
           placeholder="Password"
-          value=""
+          value={password}
           label="Password"
           onChangeText={setPassword}
           state={passwordState}
@@ -110,7 +117,7 @@ const Login = ({ navigation }: LoginProps) => {
         <Button
           onPress={handleLogin}
           width="full"
-          label="Masuk"
+          label={isLoginProcess ? 'Process...' : 'Masuk'}
           variant="primary"
           size="medium"
           disabled={isLoginButtonDisabled}
@@ -118,7 +125,7 @@ const Login = ({ navigation }: LoginProps) => {
       </View>
       <View style={styles.registerContainer}>
         <Button
-          onPress={handleSkip}
+          onPress={goToRegister}
           width="full"
           label="Daftar"
           variant="outline"

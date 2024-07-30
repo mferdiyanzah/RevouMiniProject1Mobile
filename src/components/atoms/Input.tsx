@@ -1,7 +1,7 @@
 import COLORS from '@constants/colors';
 import TYPOGRAPHY from '@constants/typography';
 import React, { useMemo, useState } from 'react';
-import { StyleSheet, TextInput, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, TextInput, View } from 'react-native';
 import Button from './Button';
 import Icon from './Icon';
 import Typography from './Typography';
@@ -17,6 +17,7 @@ interface InputProps extends React.ComponentProps<typeof TextInput> {
   value?: string;
   state: InputState;
   errorMessage?: string;
+  loading?: boolean;
 }
 
 const Input: React.FC<InputProps> = props => {
@@ -28,6 +29,8 @@ const Input: React.FC<InputProps> = props => {
     errorMessage,
     onChangeText,
     onPress,
+    value,
+    loading,
   } = props;
 
   const [showPassword, setShowPassword] = useState(false);
@@ -70,6 +73,7 @@ const Input: React.FC<InputProps> = props => {
           onBlur={handleBlur}
           onChangeText={onChangeText}
           onPress={onPress}
+          value={value}
         />
         {type === 'password' ? (
           <View style={styles.buttonContainer}>
@@ -81,6 +85,11 @@ const Input: React.FC<InputProps> = props => {
               }
               iconPosition="only"
             />
+          </View>
+        ) : null}
+        {loading ? (
+          <View style={styles.buttonContainer}>
+            <ActivityIndicator size="small" color={COLORS.neutral700} />
           </View>
         ) : null}
       </View>

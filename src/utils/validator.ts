@@ -4,23 +4,23 @@ const validateEmail = (email: string): string => {
   const trimmedEmail = email.trim().toLowerCase();
 
   if (trimmedEmail.length > MAX_EMAIL_LENGTH) {
-    return `Email address must not exceed ${MAX_EMAIL_LENGTH} characters.`;
+    return `Alamat email tidak boleh melebihi ${MAX_EMAIL_LENGTH} karakter.`;
   }
 
   if (!EMAIL_REGEX.test(trimmedEmail)) {
     if (trimmedEmail.includes(' ')) {
-      return 'Email address cannot contain spaces.';
+      return 'Alamat email tidak boleh mengandung spasi.';
     }
     if (/[()<>,;:"[\]]/.test(trimmedEmail)) {
-      return 'Email address contains illegal characters. Avoid using (), <>, ,, ;, :, ", or [].';
+      return 'Alamat email mengandung karakter ilegal. Hindari penggunaan (), <>, ,, ;, :, ", atau [].';
     }
     if (!trimmedEmail.includes('@')) {
-      return 'Email address must contain an @ symbol.';
+      return 'Alamat email harus mengandung simbol @.';
     }
     if (!trimmedEmail.includes('.')) {
-      return 'Email address must contain a domain (e.g., .com, .org).';
+      return 'Alamat email harus mengandung domain (contoh: .com, .org).';
     }
-    return 'Invalid email format. Please use a valid email address.';
+    return 'Format email tidak valid. Mohon gunakan alamat email yang valid.';
   }
 
   return '';
@@ -31,25 +31,25 @@ const PASSWORD_REGEX =
 
 const validatePassword = (password: string): string => {
   if (password.length < 8) {
-    return 'Password must be at least 8 characters long.';
+    return 'Kata sandi harus memiliki panjang minimal 8 karakter.';
   }
 
   if (password.length > 64) {
-    return 'Password must not exceed 64 characters.';
+    return 'Kata sandi tidak boleh melebihi 64 karakter.';
   }
 
   if (!PASSWORD_REGEX.test(password)) {
     if (!/(?=.*[a-z])/.test(password)) {
-      return 'Password must include at least one lowercase letter.';
+      return 'Kata sandi harus mengandung setidaknya satu huruf kecil.';
     }
     if (!/(?=.*[A-Z])/.test(password)) {
-      return 'Password must include at least one uppercase letter.';
+      return 'Kata sandi harus mengandung setidaknya satu huruf besar.';
     }
     if (!/(?=.*\d)/.test(password)) {
-      return 'Password must include at least one number.';
+      return 'Kata sandi harus mengandung setidaknya satu angka.';
     }
     if (!/(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?])/.test(password)) {
-      return 'Password must include at least one special character.';
+      return 'Kata sandi harus mengandung setidaknya satu karakter khusus.';
     }
   }
 

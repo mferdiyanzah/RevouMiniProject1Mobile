@@ -46,12 +46,15 @@ const Home = ({ route, navigation }: HomeProps) => {
     ({ route }: { route: any }): BottomTabNavigationOptions => ({
       headerShown: false,
       tabBarIcon: ({ focused }) => TabBarIcon({ focused, route }),
-      tabBarLabelStyle: styles.tabBarLabel,
+      tabBarLabelStyle: [styles.tabBarLabel],
       tabBarActiveTintColor: COLORS.primary,
+      tabBarIconStyle: {
+        borderWidth: 1,
+        marginTop: 4,
+      },
     }),
     [],
   );
-
   return (
     <HomeContext.Provider value={{ navigation, route }}>
       <View style={styles.container}>
@@ -73,14 +76,13 @@ const styles = StyleSheet.create({
   },
   promoContainer: {
     position: 'absolute',
-    bottom: 48,
+    bottom: 68,
     left: 0,
     right: 0,
     height: 50,
     backgroundColor: COLORS.purple100,
     flexDirection: 'row',
     alignItems: 'center',
-    // justifyContent: 'center',
     gap: 12,
     paddingLeft: 16,
   },
