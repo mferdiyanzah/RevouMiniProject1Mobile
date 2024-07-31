@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "810375901342",
+    "project_id": "investly-revou",
+    "storage_bucket": "investly-revou.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:810375901342:android:4bfb9ec7eee452b4e9cb8f",
+        "android_client_info": {
+          "package_name": "com.revou.investly"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDbTpcJIMBKbyIgWRDGNHu5nl0MDJEBar0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

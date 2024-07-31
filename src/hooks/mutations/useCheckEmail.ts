@@ -9,7 +9,6 @@ const checkEmail = async (email: string) => {
       'https://develop.investly.id/api/auth/v1/email/check',
       payload,
     );
-    console.log(data);
     return !data.status as Boolean;
   } catch (error) {
     return error;

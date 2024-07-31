@@ -2,7 +2,7 @@ import Button from '@components/atoms/Button';
 import Typography from '@components/atoms/Typography';
 import COLORS from '@constants/colors';
 import useFetchTopics, { ITopic } from '@hooks/queries/useFetchTopics';
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   Dimensions,
@@ -15,65 +15,83 @@ import {
   View,
 } from 'react-native';
 import AuthHeader from './AuthHeader';
+import useRegisterStore from '@stores/useRegisterStore';
 
 const { width } = Dimensions.get('window');
 
 const InterestTopicSelection = () => {
+  const { setCurrentStep } = useRegisterStore();
+
   const { data, isLoading } = useFetchTopics();
   const [selectedTopic, setSelectedTopic] = useState<string[]>([]);
 
-  const renderImages: ListRenderItem<ITopic> = ({ item, index }) => {
-    const isFirstRow = index < 3;
+  const handleClickTopic = useCallback(
+    (isSelected: boolean, id: string) => {
+      if (isSelected) {
+        setSelectedTopic(prev => prev.filter(topic => topic !== id));
+      } else {
+        if (selectedTopic.length < 3) {
+          setSelectedTopic(prev => [...prev, id]);
+        } else {
+          ToastAndroid.show(
+            'Anda hanya bisa memilih 3 topik',
+            ToastAndroid.SHORT,
+          );
+        }
+      }
+    },
+    [selectedTopic],
+  );
 
-    const isSelected = selectedTopic.includes(item.id);
-    const imageStyle = [styles.image, isSelected && styles.activeTopic];
-    const labelStyle = [
-      styles.topicLabel,
-      isSelected && styles.activeTopicLabel,
-    ];
-    const topicContainerStyle = [
-      styles.topicContainer,
-      isFirstRow && { marginTop: 0 },
-    ];
+  const renderImages: ListRenderItem<ITopic> = useCallback(
+    ({ item, index }) => {
+      const isFirstRow = index < 3;
 
-    return (
-      <TouchableOpacity
-        onPress={() => {
-          if (isSelected) {
-            setSelectedTopic(prev => prev.filter(topic => topic !== item.id));
-          } else {
-            if (selectedTopic.length < 3) {
-              setSelectedTopic(prev => [...prev, item.id]);
-            } else {
-              ToastAndroid.show(
-                'Anda hanya bisa memilih 3 topik',
-                ToastAndroid.SHORT,
-              );
-            }
-          }
-        }}
-        style={topicContainerStyle}>
-        <Image source={{ uri: item.file.full_path }} style={imageStyle} />
-        <View style={styles.topicLabelContainer}>
-          <Typography
-            type="heading"
-            size="xSmall"
-            style={labelStyle}
-            numberOfLines={2}>
-            {item.label}
-          </Typography>
-        </View>
-      </TouchableOpacity>
-    );
-  };
+      const isSelected = selectedTopic.includes(item.id);
+      const imageStyle = [styles.image, isSelected && styles.activeTopic];
+      const labelStyle = [
+        styles.topicLabel,
+        isSelected && styles.activeTopicLabel,
+      ];
+      const topicContainerStyle = [
+        styles.topicContainer,
+        isFirstRow && { marginTop: 0 },
+      ];
+
+      return (
+        <TouchableOpacity
+          onPress={() => handleClickTopic(isSelected, item.id)}
+          style={topicContainerStyle}>
+          <Image source={{ uri: item.file.full_path }} style={imageStyle} />
+          <View style={styles.topicLabelContainer}>
+            <Typography
+              type="heading"
+              size="xSmall"
+              style={labelStyle}
+              numberOfLines={2}>
+              {item.label}
+            </Typography>
+          </View>
+        </TouchableOpacity>
+      );
+    },
+    [selectedTopic, handleClickTopic],
+  );
 
   const isRegisterButtonDisabled = useMemo(() => {
     return selectedTopic.length !== 3;
   }, [selectedTopic]);
 
+  const goToPreviousScreen = useCallback(() => {
+    setCurrentStep(2);
+  }, [setCurrentStep]);
+
   return (
     <View style={styles.container}>
-      <AuthHeader rightAction={() => {}} goToPreviousScreen={() => {}} />
+      <AuthHeader
+        rightAction={() => {}}
+        goToPreviousScreen={goToPreviousScreen}
+      />
       <View style={styles.formTitleContainer}>
         <Typography type="heading" size="xLarge">
           Pilih 3 Topik Favorit

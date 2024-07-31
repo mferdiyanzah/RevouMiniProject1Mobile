@@ -46,22 +46,24 @@ const AccountCredential = () => {
       if (emailValidatorResponse) {
         setEmailErrorMessage(emailValidatorResponse);
       } else {
-        try {
-          const isEmailExisted = await checkEmail(email);
-          setEmailErrorMessage(
-            isEmailExisted ? 'Email telah dipakai, gunakan email lain' : '',
-          );
-        } catch (error) {
-          setEmailErrorMessage('Terjadi kesalahan saat memeriksa email');
+        if (emailValidationTimeoutRef.current) {
+          clearTimeout(emailValidationTimeoutRef.current);
         }
+        emailValidationTimeoutRef.current = setTimeout(async () => {
+          try {
+            const isEmailExisted = await checkEmail(email);
+            setEmailErrorMessage(
+              isEmailExisted ? 'Email telah dipakai, gunakan email lain' : '',
+            );
+          } catch (error) {
+            setEmailErrorMessage('Terjadi kesalahan saat memeriksa email');
+          }
+        }, 500);
       }
     };
 
     if (email) {
-      if (emailValidationTimeoutRef.current) {
-        clearTimeout(emailValidationTimeoutRef.current);
-      }
-      emailValidationTimeoutRef.current = setTimeout(validateEmail, 500);
+      validateEmail();
     } else {
       setEmailErrorMessage('');
     }

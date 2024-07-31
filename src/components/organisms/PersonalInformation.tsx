@@ -2,39 +2,63 @@ import Button from '@components/atoms/Button';
 import Input from '@components/atoms/Input';
 import Typography from '@components/atoms/Typography';
 import COLORS from '@constants/colors';
-import { useNavigation } from '@react-navigation/native';
+import useFetchUsername from '@hooks/queries/useFetchUsername';
 import useRegisterStore from '@stores/useRegisterStore';
-import React, { useCallback, useEffect, useMemo } from 'react';
-import { BackHandler, StyleSheet, View } from 'react-native';
-import { StackNavigation } from 'types/navigation';
+import VALIDATOR from '@utils/validator';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import { StyleSheet, View } from 'react-native';
 import AuthHeader from './AuthHeader';
 
 const PersonalInformation = () => {
-  const { name, username, setName, setUsername, currentStep, setCurrentStep } =
+  const { name, username, setName, setUsername, setCurrentStep } =
     useRegisterStore();
 
-  const navigation = useNavigation<StackNavigation>();
+  const {
+    isSuccess: isUsernameExisted,
+    isFetching: isCheckingUsername,
+    refetch: checkUsername,
+  } = useFetchUsername(username);
+
+  const usernameValidationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const [usernameErrorMessage, setUsernameErrorMessage] = useState<
+    string | undefined
+  >('');
 
   useEffect(() => {
-    const handleBackButton = () => {
-      const previousStep = currentStep - 1;
+    if (isUsernameExisted) {
+      setUsernameErrorMessage('Username telah dipakai, gunakan username lain');
+      return;
+    }
 
-      if (currentStep === 1) {
-        navigation.goBack();
-      } else {
-        setCurrentStep(previousStep);
+    if (username === '') {
+      setUsernameErrorMessage('Username tidak boleh kosong');
+    } else {
+      if (usernameValidationTimeoutRef.current) {
+        clearTimeout(usernameValidationTimeoutRef.current);
       }
-      return true;
-    };
 
-    BackHandler.addEventListener('hardwareBackPress', handleBackButton);
+      usernameValidationTimeoutRef.current = setTimeout(async () => {
+        await checkUsername();
+      }, 500);
+    }
 
     return () => {
-      BackHandler.removeEventListener('hardwareBackPress', handleBackButton);
+      if (usernameValidationTimeoutRef.current) {
+        clearTimeout(usernameValidationTimeoutRef.current);
+      }
     };
+  }, [username, checkUsername, isUsernameExisted]);
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const nameErrorMessage = useMemo(() => {
+    return VALIDATOR.name(name);
+  }, [name]);
 
   const isNextButtonDisabled = useMemo(() => {
     return !name || !username;
@@ -47,6 +71,14 @@ const PersonalInformation = () => {
   const handlePreviousStep = useCallback(() => {
     setCurrentStep(1);
   }, [setCurrentStep]);
+
+  const usernameState = useMemo(() => {
+    return username ? (usernameErrorMessage ? 'error' : 'success') : 'default';
+  }, [username, usernameErrorMessage]);
+
+  const nameState = useMemo(() => {
+    return name ? (nameErrorMessage ? 'error' : 'success') : 'default';
+  }, [name, nameErrorMessage]);
 
   return (
     <View style={styles.container}>
@@ -63,11 +95,12 @@ const PersonalInformation = () => {
       <View style={styles.formContainer}>
         <Input
           type="text"
-          placeholder="Nama Lengkap"
+          placeholder="Nama"
           value={name}
-          label="Nama Lengkap"
+          label="Nama"
           onChangeText={setName}
-          state="default"
+          state={nameState}
+          errorMessage={nameErrorMessage}
         />
         <Input
           type="text"
@@ -75,7 +108,9 @@ const PersonalInformation = () => {
           value={username}
           label="Username"
           onChangeText={setUsername}
-          state="default"
+          state={usernameState}
+          errorMessage={usernameErrorMessage}
+          loading={isCheckingUsername}
         />
       </View>
       <View style={styles.registerContainer}>

@@ -1,6 +1,10 @@
 import { EMAIL_REGEX, MAX_EMAIL_LENGTH } from '@constants/general';
 
 const validateEmail = (email: string): string => {
+  if (!email || email.trim() === '') {
+    return 'Alamat email tidak boleh kosong.';
+  }
+
   const trimmedEmail = email.trim().toLowerCase();
 
   if (trimmedEmail.length > MAX_EMAIL_LENGTH) {
@@ -30,6 +34,10 @@ const PASSWORD_REGEX =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?])[\w!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?]{8,64}$/;
 
 const validatePassword = (password: string): string => {
+  if (!password) {
+    return 'Kata sandi tidak boleh kosong.';
+  }
+
   if (password.length < 8) {
     return 'Kata sandi harus memiliki panjang minimal 8 karakter.';
   }
@@ -56,9 +64,22 @@ const validatePassword = (password: string): string => {
   return '';
 };
 
+const validateName = (name: string): string => {
+  if (!name || name.trim() === '') {
+    return 'Nama lengkap tidak boleh kosong.';
+  }
+
+  if (name.trim().length < 3) {
+    return 'Nama lengkap harus memiliki panjang minimal 3 karakter.';
+  }
+
+  return '';
+};
+
 const VALIDATOR = {
   email: validateEmail,
   password: validatePassword,
+  name: validateName,
 };
 
 export default VALIDATOR;
