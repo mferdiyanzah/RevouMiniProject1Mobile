@@ -2,16 +2,13 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
 const fetchUsername = async (username: string) => {
-  console.log('fetching username', username);
   try {
     const { data } = await axios.get(
       `https://develop.investly.id/api/social/v1/public/username/${username}`,
     );
-    console.log(data.status);
     return data.status as boolean;
   } catch (error) {
     if (error instanceof Error) {
-      console.info(error.message);
       throw new Error(error.message);
     }
   }

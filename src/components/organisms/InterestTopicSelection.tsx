@@ -17,21 +17,45 @@ import {
 import AuthHeader from './AuthHeader';
 import useRegisterStore from '@stores/useRegisterStore';
 
+import analytics from '@react-native-firebase/analytics';
+import useRegister from '@hooks/mutations/useRegister';
+
 const { width } = Dimensions.get('window');
 
 const InterestTopicSelection = () => {
-  const { setCurrentStep } = useRegisterStore();
+  const { email, name, username, password, setCurrentStep } =
+    useRegisterStore();
+
+  const { mutateAsync: register } = useRegister();
 
   const { data, isLoading } = useFetchTopics();
   const [selectedTopic, setSelectedTopic] = useState<string[]>([]);
 
   const handleClickTopic = useCallback(
-    (isSelected: boolean, id: string) => {
+    async (isSelected: boolean, topic: ITopic) => {
+      const analyticProperties = {
+        email,
+        name,
+        username,
+        topic_id: topic.id,
+        topic_name: topic.label,
+      };
+
       if (isSelected) {
-        setSelectedTopic(prev => prev.filter(topic => topic !== id));
+        await analytics().logEvent(
+          'click_register_unselect_topic_id',
+          analyticProperties,
+        );
+        setSelectedTopic(prev =>
+          prev.filter(selectedTopicId => selectedTopicId !== topic.id),
+        );
       } else {
         if (selectedTopic.length < 3) {
-          setSelectedTopic(prev => [...prev, id]);
+          await analytics().logEvent(
+            'click_register_select_topic_id',
+            analyticProperties,
+          );
+          setSelectedTopic(prev => [...prev, topic.id]);
         } else {
           ToastAndroid.show(
             'Anda hanya bisa memilih 3 topik',
@@ -40,7 +64,7 @@ const InterestTopicSelection = () => {
         }
       }
     },
-    [selectedTopic],
+    [email, name, selectedTopic.length, username],
   );
 
   const renderImages: ListRenderItem<ITopic> = useCallback(
@@ -60,7 +84,7 @@ const InterestTopicSelection = () => {
 
       return (
         <TouchableOpacity
-          onPress={() => handleClickTopic(isSelected, item.id)}
+          onPress={() => handleClickTopic(isSelected, item)}
           style={topicContainerStyle}>
           <Image source={{ uri: item.file.full_path }} style={imageStyle} />
           <View style={styles.topicLabelContainer}>
@@ -85,6 +109,18 @@ const InterestTopicSelection = () => {
   const goToPreviousScreen = useCallback(() => {
     setCurrentStep(2);
   }, [setCurrentStep]);
+
+  const handleRegister = useCallback(async () => {
+    const payload = {
+      username: username as string,
+      name: name as string,
+      email: email as string,
+      password: password as string,
+      favorite_topic_ids: selectedTopic as string[],
+    };
+
+    await register(payload);
+  }, [email, name, password, register, selectedTopic, username]);
 
   return (
     <View style={styles.container}>
@@ -127,6 +163,7 @@ const InterestTopicSelection = () => {
           variant="primary"
           size="medium"
           disabled={isRegisterButtonDisabled}
+          onPress={handleRegister}
         />
       </View>
     </View>

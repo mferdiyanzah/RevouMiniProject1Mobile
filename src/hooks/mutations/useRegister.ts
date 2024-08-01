@@ -1,15 +1,17 @@
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
-
-export interface LoginPayload {
+export interface RegisterPayload {
   email: string;
   password: string;
+  username: string;
+  name: string;
+  favorite_topic_ids: string[];
 }
 
-const login = async (payload: LoginPayload) => {
+const register = async (payload: RegisterPayload) => {
   try {
     const { data } = await axios.post(
-      'https://develop.investly.id/api/auth/v2/login',
+      'https://develop.investly.id/api/auth/v4/register',
       payload,
     );
 
@@ -19,9 +21,9 @@ const login = async (payload: LoginPayload) => {
   }
 };
 
-const useLogin = () =>
+const useRegister = () =>
   useMutation({
-    mutationFn: login,
+    mutationFn: register,
   });
 
-export default useLogin;
+export default useRegister;

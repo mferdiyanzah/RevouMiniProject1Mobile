@@ -27,7 +27,7 @@ const AuthHeader = ({
           variant="link"
           icon={<LeftArrowSVG />}
           iconPosition="only"
-          width={30}
+          width={20}
         />
       </View>
       {!isLogoHidden && (

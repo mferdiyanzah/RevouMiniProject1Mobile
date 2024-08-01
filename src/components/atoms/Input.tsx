@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
     ...TYPOGRAPHY.paragraph.small,
   },
   buttonContainer: {
-    marginEnd: 8,
+    marginEnd: 12,
   },
 });
 

@@ -3,17 +3,22 @@ import Input from '@components/atoms/Input';
 import Typography from '@components/atoms/Typography';
 import AuthHeader from '@components/organisms/AuthHeader';
 import TYPOGRAPHY from '@constants/typography';
-import useLogin from '@hooks/mutations/useLogin';
+import useLogin, { LoginResponse } from '@hooks/mutations/useLogin';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import VALIDATOR from '@utils/validator';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Alert, StyleSheet, View } from 'react-native';
+import { Alert, StyleSheet, ToastAndroid, View } from 'react-native';
 import { RootStackParamList } from 'types/navigation';
+
+import analytics from '@react-native-firebase/analytics';
+
+import Config from 'react-native-config';
+console.log(Config.API_URL);
 
 type LoginProps = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
 const Login = ({ navigation }: LoginProps) => {
-  const { mutate: onLogin, isPending: isLoginProcess, data } = useLogin();
+  const { mutateAsync: onLogin, isPending: isLoginProcess } = useLogin();
 
   const [email, setEmail] = useState<string>('');
   const [emailErrorMessage, setEmailErrorMessage] = useState<string>('');
@@ -36,21 +41,19 @@ const Login = ({ navigation }: LoginProps) => {
     setEmail(formattedEmail);
   };
 
-  const handleSkip = () => {
+  const handleSkip = useCallback(() => {
     navigation.navigate('HomeScreen');
-  };
+  }, [navigation]);
 
-  const handleLogin = async () => {
-    onLogin({ email, password });
-    console.log(data, 'testtt');
-    // if (email === CORRECT_EMAIL && password === CORRECT_PASSWORD) {
-    //   setIsLoggedIn(true);
-    //   navigation.navigate('HomeScreen');
-    //   return;
-    // }
+  const handleLogin = useCallback(async () => {
+    const loginPayload = { email, password };
 
-    Alert.alert('Email atau password salah');
-  };
+    const response = (await onLogin(loginPayload)) as LoginResponse;
+    if (!response.status) {
+      await analytics().logEvent('failed_login_account', loginPayload);
+      ToastAndroid.show('Email atau Password Salah', 500);
+    }
+  }, [email, onLogin, password]);
 
   const goToPreviousScreen = useCallback(() => {
     navigation.goBack();
@@ -72,7 +75,9 @@ const Login = ({ navigation }: LoginProps) => {
     return emailErrorMessage !== '' || passwordErrorMessage !== '';
   }, [emailErrorMessage, passwordErrorMessage]);
 
-  const goToRegister = useCallback(() => {
+  const goToRegister = useCallback(async () => {
+    await analytics().logEvent('click_register_button');
+
     navigation.navigate('Register');
   }, [navigation]);
 
@@ -143,7 +148,9 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     backgroundColor: 'white',
-    padding: 16,
+    paddingTop: 12,
+    paddingBottom: 44,
+    paddingHorizontal: 24,
   },
   formContainer: {
     marginTop: 32,

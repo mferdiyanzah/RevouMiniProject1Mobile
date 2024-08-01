@@ -6,16 +6,33 @@ export interface LoginPayload {
   password: string;
 }
 
+export interface LoginResponse {
+  status: boolean;
+  messages: string;
+  data: LoginDataResponse;
+}
+
+interface LoginDataResponse {
+  access_token: string;
+  refresh_token: string;
+  is_verified: boolean;
+  expired_at: string;
+}
+
 const login = async (payload: LoginPayload) => {
   try {
-    const { data } = await axios.post(
+    const response = await axios.post<LoginResponse>(
       'https://develop.investly.id/api/auth/v2/login',
       payload,
+      {
+        validateStatus: () => true,
+      },
     );
-
-    return data.data;
+    return response.data;
   } catch (error) {
-    return error;
+    if (error instanceof Error) {
+      return error.message;
+    }
   }
 };
 

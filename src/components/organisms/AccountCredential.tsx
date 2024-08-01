@@ -16,6 +16,7 @@ import { StyleSheet, View } from 'react-native';
 import { StackNavigation } from 'types/navigation';
 import AuthHeader from './AuthHeader';
 import useCheckEmail from '@hooks/mutations/useCheckEmail';
+import analytics from '@react-native-firebase/analytics';
 
 const AccountCredential = () => {
   const {
@@ -41,7 +42,7 @@ const AccountCredential = () => {
   const emailValidationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    const validateEmail = async () => {
+    if (typeof email === 'string') {
       const emailValidatorResponse = VALIDATOR.email(email);
       if (emailValidatorResponse) {
         setEmailErrorMessage(emailValidatorResponse);
@@ -55,22 +56,21 @@ const AccountCredential = () => {
             setEmailErrorMessage(
               isEmailExisted ? 'Email telah dipakai, gunakan email lain' : '',
             );
+            if (isEmailExisted) {
+              await analytics().logEvent('failed_validate_register_email', {
+                email,
+              });
+            }
           } catch (error) {
             setEmailErrorMessage('Terjadi kesalahan saat memeriksa email');
           }
         }, 500);
       }
-    };
-
-    if (email) {
-      validateEmail();
-    } else {
-      setEmailErrorMessage('');
     }
   }, [email, checkEmail]);
 
   useEffect(() => {
-    const passwordValidatorResponse = VALIDATOR.password(password);
+    const passwordValidatorResponse = VALIDATOR.password(password || '');
     setPasswordErrorMessage(passwordValidatorResponse);
   }, [password]);
 
@@ -96,20 +96,26 @@ const AccountCredential = () => {
     passwordErrorMessage,
   ]);
 
-  const handleNextStep = useCallback(() => {
+  const handleNextStep = useCallback(async () => {
+    await analytics().logEvent('click_register_button_step_1', { email });
+
     setCurrentStep(2);
-  }, [setCurrentStep]);
+  }, [setCurrentStep, email]);
 
   const goToLogin = useCallback(() => {
     navigation.navigate('Login');
   }, [navigation]);
 
   const emailState = useMemo(() => {
-    return email ? (emailErrorMessage === '' ? 'success' : 'error') : 'default';
+    return typeof email === 'string'
+      ? emailErrorMessage === ''
+        ? 'success'
+        : 'error'
+      : 'default';
   }, [email, emailErrorMessage]);
 
   const passwordState = useMemo(() => {
-    return password
+    return typeof password === 'string'
       ? passwordErrorMessage === ''
         ? 'success'
         : 'error'
@@ -124,12 +130,16 @@ const AccountCredential = () => {
       : 'default';
   }, [confirmPassword, password]);
 
+  const goToPreviousScreen = useCallback(() => {
+    navigation.goBack();
+  }, [navigation]);
+
   return (
     <View style={styles.container}>
       <AuthHeader
         rightAction={goToLogin}
         rightActionLabel="Masuk"
-        goToPreviousScreen={() => {}}
+        goToPreviousScreen={goToPreviousScreen}
       />
       <View style={styles.formTitleContainer}>
         <Typography type="heading" size="xLarge">

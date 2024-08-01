@@ -1,5 +1,4 @@
-const EMAIL_REGEX =
-  /^[^\s()<>,;:"[\]]{1,64}@[^\s()<>,;:"[\]]{1,255}\.[^\s()<>,;:"[\]]{2,}$/;
+const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 const MAX_EMAIL_LENGTH = 254;
 

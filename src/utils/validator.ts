@@ -1,7 +1,7 @@
 import { EMAIL_REGEX, MAX_EMAIL_LENGTH } from '@constants/general';
 
 const validateEmail = (email: string): string => {
-  if (!email || email.trim() === '') {
+  if (email === '') {
     return 'Alamat email tidak boleh kosong.';
   }
 

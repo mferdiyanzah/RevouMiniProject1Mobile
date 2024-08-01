@@ -15,39 +15,50 @@ import React, {
 import { StyleSheet, View } from 'react-native';
 import AuthHeader from './AuthHeader';
 
+import analytics from '@react-native-firebase/analytics';
+
 const PersonalInformation = () => {
-  const { name, username, setName, setUsername, setCurrentStep } =
+  const { name, username, email, setName, setUsername, setCurrentStep } =
     useRegisterStore();
 
   const {
     isSuccess: isUsernameExisted,
     isFetching: isCheckingUsername,
     refetch: checkUsername,
-  } = useFetchUsername(username);
+  } = useFetchUsername(username || '');
 
   const usernameValidationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  const [usernameErrorMessage, setUsernameErrorMessage] = useState<
-    string | undefined
-  >('');
+  const [usernameErrorMessage, setUsernameErrorMessage] = useState<string>('');
 
   useEffect(() => {
-    if (isUsernameExisted) {
-      setUsernameErrorMessage('Username telah dipakai, gunakan username lain');
+    const validateUsername = async () => {
+      if (!username) {
+        setUsernameErrorMessage('Username tidak boleh kosong');
+      } else if (isUsernameExisted) {
+        setUsernameErrorMessage(
+          'Username telah dipakai, gunakan username lain',
+        );
+        await analytics().logEvent('failed_validate_register_username', {
+          username,
+        });
+      } else {
+        setUsernameErrorMessage('');
+      }
+    };
+
+    if (!username) {
+      setUsernameErrorMessage('Username tidak boleh kosong');
       return;
     }
 
-    if (username === '') {
-      setUsernameErrorMessage('Username tidak boleh kosong');
-    } else {
-      if (usernameValidationTimeoutRef.current) {
-        clearTimeout(usernameValidationTimeoutRef.current);
-      }
-
-      usernameValidationTimeoutRef.current = setTimeout(async () => {
-        await checkUsername();
-      }, 500);
+    if (usernameValidationTimeoutRef.current) {
+      clearTimeout(usernameValidationTimeoutRef.current);
     }
+
+    usernameValidationTimeoutRef.current = setTimeout(() => {
+      checkUsername();
+      validateUsername();
+    }, 500);
 
     return () => {
       if (usernameValidationTimeoutRef.current) {
@@ -57,23 +68,33 @@ const PersonalInformation = () => {
   }, [username, checkUsername, isUsernameExisted]);
 
   const nameErrorMessage = useMemo(() => {
-    return VALIDATOR.name(name);
+    return VALIDATOR.name(name || '');
   }, [name]);
 
   const isNextButtonDisabled = useMemo(() => {
     return !name || !username;
   }, [name, username]);
 
-  const handleNextStep = useCallback(() => {
+  const handleNextStep = useCallback(async () => {
+    await analytics().logEvent('click_register_button_step_2', {
+      username,
+      email,
+      name,
+    });
+
     setCurrentStep(3);
-  }, [setCurrentStep]);
+  }, [email, name, setCurrentStep, username]);
 
   const handlePreviousStep = useCallback(() => {
     setCurrentStep(1);
   }, [setCurrentStep]);
 
   const usernameState = useMemo(() => {
-    return username ? (usernameErrorMessage ? 'error' : 'success') : 'default';
+    return typeof username === 'string'
+      ? usernameErrorMessage
+        ? 'error'
+        : 'success'
+      : 'default';
   }, [username, usernameErrorMessage]);
 
   const nameState = useMemo(() => {

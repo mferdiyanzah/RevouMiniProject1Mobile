@@ -97,6 +97,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingVertical: 44,
   },
   item: {
     width: 300,
@@ -115,13 +116,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   carouselContainer: {
-    flex: 1,
+    flex: 12,
     width: width,
   },
   buttonContainer: {
-    position: 'absolute',
-    bottom: 20,
-    width: '100%',
+    alignSelf: 'stretch',
+    flex: 1,
+    justifyContent: 'flex-end',
     paddingHorizontal: 20,
   },
   dotContainer: {

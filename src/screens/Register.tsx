@@ -56,7 +56,8 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     backgroundColor: 'white',
-    paddingVertical: 12,
+    paddingTop: 12,
+    paddingBottom: 44,
     paddingHorizontal: 24,
   },
   formTitleContainer: {
