@@ -1,10 +1,11 @@
 import Button from '@components/atoms/Button';
 import HomeTab from '@components/bottom-tabs/Home/HomeTab';
 import ProfileTab from '@components/bottom-tabs/Home/ProfileTab';
-import TabBarIcon from '@components/molecules/TabBarIcon';
+import TabBar from '@components/organisms/TabBar';
 import COLORS from '@constants/colors';
 import TYPOGRAPHY from '@constants/typography';
 import {
+  BottomTabBarProps,
   BottomTabNavigationOptions,
   createBottomTabNavigator,
 } from '@react-navigation/bottom-tabs';
@@ -42,41 +43,20 @@ const Home = ({ navigation }: HomeProps) => {
   }, [accessToken, goToLogin]);
 
   const screenOptions = useCallback(
-    ({ route }: { route: any }): BottomTabNavigationOptions => ({
+    (): BottomTabNavigationOptions => ({
       headerShown: false,
-      tabBarIcon: ({ focused }) => TabBarIcon({ focused, route }),
-      tabBarLabelStyle: [styles.tabBarLabel],
-      tabBarActiveTintColor: COLORS.primary,
-      tabBarIconStyle: {
-        height: 24,
-        marginTop: 4,
-      },
     }),
     [],
   );
 
-  // const TabBar = useCallback(() => {
-  //   return (
-  //     <View>
-  //       <Button
-  //         variant="custom"
-  //         size="small"
-  //         label="Home"
-  //         // onPress={() => navigation.navigate('Home')}
-  //       />
-  //       <Button
-  //         variant="custom"
-  //         size="small"
-  //         label="Profile"
-  //         // onPress={() => navigation.navigate('Profile')}
-  //       />
-  //     </View>
-  //   );
-  // }, []);
+  const renderTabBar = useCallback(
+    (props: BottomTabBarProps) => <TabBar {...props} />,
+    [],
+  );
 
   return (
     <View style={styles.container}>
-      <Tab.Navigator screenOptions={screenOptions}>
+      <Tab.Navigator screenOptions={screenOptions} tabBar={renderTabBar}>
         <Tab.Screen name="Home" component={HomeTab} />
         <Tab.Screen name="Profile" component={ProfileTab} />
       </Tab.Navigator>

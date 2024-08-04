@@ -2,7 +2,7 @@ import Icon from '@components/atoms/Icon';
 import COLORS from '@constants/colors';
 import TYPOGRAPHY from '@constants/typography';
 import useAuthStore from '@stores/useAuthStore';
-import React, { useCallback, useMemo } from 'react';
+import React, { memo, useCallback, useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Button from '../atoms/Button';
 
@@ -108,7 +108,7 @@ const ActionPostButton = ({
   );
 };
 
-export default ActionPostButton;
+export default memo(ActionPostButton);
 
 const styles = StyleSheet.create({
   container: {

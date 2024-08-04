@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import CreatePost from '@screens/CreatePost';
 import DetailPost from '@screens/DetailPost';
 import Register from '@screens/Register';
+import SplashScreen from '@screens/SplashScreen';
 import useAuthStore from '@stores/useAuthStore';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
@@ -10,7 +11,6 @@ import { RootStackParamList } from 'types/navigation';
 import Home from './screens/Home';
 import Login from './screens/Login';
 import Onboarding from './screens/Onboarding';
-import { ActivityIndicator } from 'react-native';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -44,7 +44,7 @@ const App = () => {
   }, [accessToken]);
 
   if (isLoading) {
-    return <ActivityIndicator />;
+    return <SplashScreen />;
   }
 
   return (

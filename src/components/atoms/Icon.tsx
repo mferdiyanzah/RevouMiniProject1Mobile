@@ -18,7 +18,7 @@ import SendSVG from '@assets/icons/send.svg';
 import FileSVG from '@assets/icons/file.svg';
 import ImageSVG from '@assets/icons/image.svg';
 
-type IconVariant =
+export type IconVariant =
   | 'bell'
   | 'question'
   | 'plus'

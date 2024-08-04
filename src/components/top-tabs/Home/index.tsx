@@ -21,7 +21,7 @@ const HomeTopTab = ({ generateData, isLoading }: HomeTopTabProps) => {
   const screenOptions: MaterialTopTabNavigationOptions = useMemo(
     () => ({
       tabBarActiveTintColor: COLORS.primary,
-      tabBarInactiveTintColor: 'black', // Set inactive tab title color to black
+      tabBarInactiveTintColor: 'black',
       tabBarLabelStyle: styles.tabBarLabel,
       tabBarStyle: styles.tabBar,
       tabBarIndicatorStyle: styles.tabBarIndicator,
@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
     width: '42%',
     marginHorizontal: 16,
     backgroundColor: COLORS.primary,
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: COLORS.primary,
   },
   loadingContainer: {

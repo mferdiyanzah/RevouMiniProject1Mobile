@@ -3,7 +3,7 @@ import Typography from '@components/atoms/Typography';
 import COLORS from '@constants/colors';
 import useFetchTopics, { ITopic } from '@hooks/queries/useFetchTopics';
 import useRegisterStore from '@stores/useRegisterStore';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { memo, useCallback, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   Dimensions,
@@ -198,7 +198,7 @@ const InterestTopicSelection = () => {
   );
 };
 
-export default InterestTopicSelection;
+export default memo(InterestTopicSelection);
 
 const styles = StyleSheet.create({
   container: {
