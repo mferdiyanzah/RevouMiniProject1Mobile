@@ -2,6 +2,7 @@ import Button from '@components/atoms/Button';
 import Typography from '@components/atoms/Typography';
 import COLORS from '@constants/colors';
 import useFetchTopics, { ITopic } from '@hooks/queries/useFetchTopics';
+import useRegisterStore from '@stores/useRegisterStore';
 import React, { useCallback, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
@@ -15,10 +16,12 @@ import {
   View,
 } from 'react-native';
 import AuthHeader from './AuthHeader';
-import useRegisterStore from '@stores/useRegisterStore';
 
+import useRegister, { RegisterResponse } from '@hooks/mutations/useRegister';
 import analytics from '@react-native-firebase/analytics';
-import useRegister from '@hooks/mutations/useRegister';
+import { useNavigation } from '@react-navigation/native';
+import useAuthStore from '@stores/useAuthStore';
+import { StackNavigation } from 'types/navigation';
 
 const { width } = Dimensions.get('window');
 
@@ -26,81 +29,83 @@ const InterestTopicSelection = () => {
   const { email, name, username, password, setCurrentStep } =
     useRegisterStore();
 
-  const { mutateAsync: register } = useRegister();
+  const { setAccessToken, setRefreshToken } = useAuthStore();
 
-  const { data, isLoading } = useFetchTopics();
+  const navigation = useNavigation<StackNavigation>();
+
+  const {
+    mutateAsync: register,
+    isError: isRegisterError,
+    isSuccess: isRegisterSuccess,
+  } = useRegister();
+
+  const { data: responseData, isLoading } = useFetchTopics();
   const [selectedTopic, setSelectedTopic] = useState<string[]>([]);
 
-  const handleClickTopic = useCallback(
-    async (isSelected: boolean, topic: ITopic) => {
-      const analyticProperties = {
-        email,
-        name,
-        username,
-        topic_id: topic.id,
-        topic_name: topic.label,
-      };
+  const handleClickTopic = async (isSelected: boolean, topic: ITopic) => {
+    const analyticProperties = {
+      email,
+      name,
+      username,
+      topic_id: topic.id,
+      topic_name: topic.label,
+    };
 
-      if (isSelected) {
+    if (isSelected) {
+      await analytics().logEvent(
+        'click_register_unselect_topic_id',
+        analyticProperties,
+      );
+      setSelectedTopic(prev =>
+        prev.filter(selectedTopicId => selectedTopicId !== topic.id),
+      );
+    } else {
+      if (selectedTopic.length < 3) {
         await analytics().logEvent(
-          'click_register_unselect_topic_id',
+          'click_register_select_topic_id',
           analyticProperties,
         );
-        setSelectedTopic(prev =>
-          prev.filter(selectedTopicId => selectedTopicId !== topic.id),
-        );
+        setSelectedTopic(prev => [...prev, topic.id]);
       } else {
-        if (selectedTopic.length < 3) {
-          await analytics().logEvent(
-            'click_register_select_topic_id',
-            analyticProperties,
-          );
-          setSelectedTopic(prev => [...prev, topic.id]);
-        } else {
-          ToastAndroid.show(
-            'Anda hanya bisa memilih 3 topik',
-            ToastAndroid.SHORT,
-          );
-        }
+        ToastAndroid.show(
+          'Anda hanya bisa memilih 3 topik',
+          ToastAndroid.SHORT,
+        );
       }
-    },
-    [email, name, selectedTopic.length, username],
-  );
+    }
+  };
 
-  const renderImages: ListRenderItem<ITopic> = useCallback(
-    ({ item, index }) => {
-      const isFirstRow = index < 3;
+  const renderImages: ListRenderItem<ITopic> = ({ item, index }) => {
+    const isFirstRow = index < 3;
 
-      const isSelected = selectedTopic.includes(item.id);
-      const imageStyle = [styles.image, isSelected && styles.activeTopic];
-      const labelStyle = [
-        styles.topicLabel,
-        isSelected && styles.activeTopicLabel,
-      ];
-      const topicContainerStyle = [
-        styles.topicContainer,
-        isFirstRow && { marginTop: 0 },
-      ];
+    const isSelected = selectedTopic.includes(item.id);
+    const imageStyle = [styles.image, isSelected && styles.activeTopic];
+    const labelStyle = [
+      styles.topicLabel,
+      isSelected && styles.activeTopicLabel,
+    ];
+    const topicContainerStyle = [
+      styles.topicContainer,
+      isFirstRow && { marginTop: 0 },
+    ];
 
-      return (
-        <TouchableOpacity
-          onPress={() => handleClickTopic(isSelected, item)}
-          style={topicContainerStyle}>
-          <Image source={{ uri: item.file.full_path }} style={imageStyle} />
-          <View style={styles.topicLabelContainer}>
-            <Typography
-              type="heading"
-              size="xSmall"
-              style={labelStyle}
-              numberOfLines={2}>
-              {item.label}
-            </Typography>
-          </View>
-        </TouchableOpacity>
-      );
-    },
-    [selectedTopic, handleClickTopic],
-  );
+    return (
+      <TouchableOpacity
+        onPress={() => handleClickTopic(isSelected, item)}
+        style={topicContainerStyle}>
+        <Image source={{ uri: item.file.full_path }} style={imageStyle} />
+        <View style={styles.topicLabelContainer}>
+          <Typography
+            type="heading"
+            size="xSmall"
+            style={labelStyle}
+            numberOfLines={2}>
+            {item.label}
+          </Typography>
+        </View>
+      </TouchableOpacity>
+    );
+  };
 
   const isRegisterButtonDisabled = useMemo(() => {
     return selectedTopic.length !== 3;
@@ -119,8 +124,31 @@ const InterestTopicSelection = () => {
       favorite_topic_ids: selectedTopic as string[],
     };
 
-    await register(payload);
-  }, [email, name, password, register, selectedTopic, username]);
+    const response = (await register(payload)) as RegisterResponse;
+
+    if (isRegisterError) {
+      ToastAndroid.show('Gagal mendaftar', ToastAndroid.SHORT);
+    }
+
+    if (isRegisterSuccess && response) {
+      ToastAndroid.show('Berhasil mendaftar', ToastAndroid.SHORT);
+      setAccessToken(response.access_token);
+      setRefreshToken(response.refresh_token);
+      navigation.navigate('HomeScreen');
+    }
+  }, [
+    email,
+    isRegisterError,
+    isRegisterSuccess,
+    name,
+    navigation,
+    password,
+    register,
+    selectedTopic,
+    setAccessToken,
+    setRefreshToken,
+    username,
+  ]);
 
   return (
     <View style={styles.container}>
@@ -138,10 +166,10 @@ const InterestTopicSelection = () => {
           <ActivityIndicator />
         ) : (
           <FlatList
-            data={data}
+            data={responseData}
             numColumns={3}
             renderItem={renderImages}
-            keyExtractor={item => item.id}
+            keyExtractor={item => item.id.toString()}
             horizontal={false}
             showsHorizontalScrollIndicator={false}
             showsVerticalScrollIndicator={false}

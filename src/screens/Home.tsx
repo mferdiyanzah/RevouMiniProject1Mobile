@@ -4,13 +4,12 @@ import ProfileTab from '@components/bottom-tabs/Home/ProfileTab';
 import TabBarIcon from '@components/molecules/TabBarIcon';
 import COLORS from '@constants/colors';
 import TYPOGRAPHY from '@constants/typography';
-import { useApp } from '@contexts/app';
-import { HomeContext } from '@contexts/home';
 import {
   BottomTabNavigationOptions,
   createBottomTabNavigator,
 } from '@react-navigation/bottom-tabs';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import useAuthStore from '@stores/useAuthStore';
 import React, { useCallback } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { RootStackParamList } from 'types/navigation';
@@ -19,15 +18,15 @@ const Tab = createBottomTabNavigator();
 
 type HomeProps = NativeStackScreenProps<RootStackParamList, 'HomeScreen'>;
 
-const Home = ({ route, navigation }: HomeProps) => {
-  const { isLoggedIn } = useApp();
+const Home = ({ navigation }: HomeProps) => {
+  const { accessToken } = useAuthStore();
 
   const goToLogin = useCallback(() => {
     navigation.navigate('Login');
   }, [navigation]);
 
   const RenderLoginInvitation = useCallback(() => {
-    if (isLoggedIn) {
+    if (accessToken) {
       return null;
     }
 
@@ -40,7 +39,7 @@ const Home = ({ route, navigation }: HomeProps) => {
         </View>
       </View>
     );
-  }, [isLoggedIn, goToLogin]);
+  }, [accessToken, goToLogin]);
 
   const screenOptions = useCallback(
     ({ route }: { route: any }): BottomTabNavigationOptions => ({
@@ -49,22 +48,40 @@ const Home = ({ route, navigation }: HomeProps) => {
       tabBarLabelStyle: [styles.tabBarLabel],
       tabBarActiveTintColor: COLORS.primary,
       tabBarIconStyle: {
-        borderWidth: 1,
+        height: 24,
         marginTop: 4,
       },
     }),
     [],
   );
+
+  // const TabBar = useCallback(() => {
+  //   return (
+  //     <View>
+  //       <Button
+  //         variant="custom"
+  //         size="small"
+  //         label="Home"
+  //         // onPress={() => navigation.navigate('Home')}
+  //       />
+  //       <Button
+  //         variant="custom"
+  //         size="small"
+  //         label="Profile"
+  //         // onPress={() => navigation.navigate('Profile')}
+  //       />
+  //     </View>
+  //   );
+  // }, []);
+
   return (
-    <HomeContext.Provider value={{ navigation, route }}>
-      <View style={styles.container}>
-        <Tab.Navigator screenOptions={screenOptions}>
-          <Tab.Screen name="Home" component={HomeTab} />
-          <Tab.Screen name="Profile" component={ProfileTab} />
-        </Tab.Navigator>
-        {RenderLoginInvitation()}
-      </View>
-    </HomeContext.Provider>
+    <View style={styles.container}>
+      <Tab.Navigator screenOptions={screenOptions}>
+        <Tab.Screen name="Home" component={HomeTab} />
+        <Tab.Screen name="Profile" component={ProfileTab} />
+      </Tab.Navigator>
+      {RenderLoginInvitation()}
+    </View>
   );
 };
 

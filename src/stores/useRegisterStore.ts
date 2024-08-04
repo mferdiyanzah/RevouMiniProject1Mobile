@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-
 interface RegisterState {
   email?: string;
   password?: string;

@@ -7,18 +7,25 @@ import useLogin, { LoginResponse } from '@hooks/mutations/useLogin';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import VALIDATOR from '@utils/validator';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Alert, StyleSheet, ToastAndroid, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Alert,
+  StyleSheet,
+  ToastAndroid,
+  View,
+} from 'react-native';
 import { RootStackParamList } from 'types/navigation';
 
 import analytics from '@react-native-firebase/analytics';
 
-import Config from 'react-native-config';
-console.log(Config.API_URL);
+import useAuthStore from '@stores/useAuthStore';
 
 type LoginProps = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
 const Login = ({ navigation }: LoginProps) => {
   const { mutateAsync: onLogin, isPending: isLoginProcess } = useLogin();
+
+  const { setAccessToken, setRefreshToken } = useAuthStore();
 
   const [email, setEmail] = useState<string>('');
   const [emailErrorMessage, setEmailErrorMessage] = useState<string>('');
@@ -52,8 +59,16 @@ const Login = ({ navigation }: LoginProps) => {
     if (!response.status) {
       await analytics().logEvent('failed_login_account', loginPayload);
       ToastAndroid.show('Email atau Password Salah', 500);
+    } else {
+      await analytics().logEvent('success_login_account', loginPayload);
+      setAccessToken(response.data.access_token);
+      setRefreshToken(response.data.refresh_token);
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'HomeScreen' }],
+      });
     }
-  }, [email, onLogin, password]);
+  }, [email, navigation, onLogin, password, setAccessToken, setRefreshToken]);
 
   const goToPreviousScreen = useCallback(() => {
     navigation.goBack();
@@ -122,7 +137,7 @@ const Login = ({ navigation }: LoginProps) => {
         <Button
           onPress={handleLogin}
           width="full"
-          label={isLoginProcess ? 'Process...' : 'Masuk'}
+          label={isLoginProcess ? <ActivityIndicator /> : 'Masuk'}
           variant="primary"
           size="medium"
           disabled={isLoginButtonDisabled}

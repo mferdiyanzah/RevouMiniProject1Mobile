@@ -1,8 +1,7 @@
-import Post from '@components/molecules/Post';
 import Typography from '@components/atoms/Typography';
+import Post from '@components/molecules/Post';
 import COLORS from '@constants/colors';
-import { useApp } from '@contexts/app';
-import { useHome } from '@contexts/home';
+import useAuthStore from '@stores/useAuthStore';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { IData } from 'types/data';
@@ -14,17 +13,16 @@ const PostContainer = ({
   item: IData;
   isLastIndex: boolean;
 }) => {
-  const { isLoggedIn } = useApp();
-  const { navigation } = useHome();
+  const { accessToken } = useAuthStore();
 
   const lastItemStyles = [
     styles.lastItemContainer,
-    { marginBottom: isLoggedIn ? 0 : 50 },
+    { marginBottom: accessToken ? 0 : 50 },
   ];
 
   return (
     <View>
-      <Post data={item} navigation={navigation} />
+      <Post data={item} />
       {isLastIndex && (
         <View style={lastItemStyles}>
           <Typography style={styles.text}>

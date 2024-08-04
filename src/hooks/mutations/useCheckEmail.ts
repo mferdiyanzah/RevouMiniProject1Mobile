@@ -1,12 +1,12 @@
 import { useMutation } from '@tanstack/react-query';
+import { BASE_API_URL } from '@utils/config';
 import axios from 'axios';
-
 const checkEmail = async (email: string) => {
   try {
     const payload = { email };
 
     const { data } = await axios.post(
-      'https://develop.investly.id/api/auth/v1/email/check',
+      `${BASE_API_URL}/auth/v1/email/check`,
       payload,
     );
     return !data.status as Boolean;

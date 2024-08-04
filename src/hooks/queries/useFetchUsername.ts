@@ -1,10 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
+import { BASE_API_URL } from '@utils/config';
 import axios from 'axios';
 
 const fetchUsername = async (username: string) => {
   try {
     const { data } = await axios.get(
-      `https://develop.investly.id/api/social/v1/public/username/${username}`,
+      `${BASE_API_URL}/social/v1/public/username/${username}`,
     );
     return data.status as boolean;
   } catch (error) {

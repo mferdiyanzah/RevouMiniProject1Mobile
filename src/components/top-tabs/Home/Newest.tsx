@@ -1,6 +1,6 @@
 import PostContainer from '@components/organisms/PostContainer';
-import { useApp } from '@contexts/app';
 import { MaterialTopTabScreenProps } from '@react-navigation/material-top-tabs';
+import usePostStore from '@stores/usePostStore';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, FlatList, View } from 'react-native';
 import { IData } from 'types/data';
@@ -11,19 +11,19 @@ type NewestProps = MaterialTopTabScreenProps<TopTabHomeParamList, 'Terbaru'> & {
 };
 
 const Newest = ({ generateData }: NewestProps) => {
-  const { feedData } = useApp();
+  const { posts } = usePostStore();
   const [loading, setLoading] = useState<boolean>(true);
 
   const newestData = useMemo(() => {
-    const copyFeedData = [...feedData];
+    const copyFeedData = [...posts];
     return copyFeedData.sort((a, b) => b.time.getTime() - a.time.getTime());
-  }, [feedData]);
+  }, [posts]);
 
   useEffect(() => {
-    if (feedData.length > 0) {
+    if (posts.length > 0) {
       setLoading(false);
     }
-  }, [feedData]);
+  }, [posts]);
 
   const keyExtractor = useCallback((item: IData) => item.id.toString(), []);
 

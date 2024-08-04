@@ -1,5 +1,5 @@
 import { FALLBACK_IMAGE } from '@constants/general';
-import { useApp } from '@contexts/app';
+import useAuthStore from '@stores/useAuthStore';
 import React, { useCallback, useMemo, useState } from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 
@@ -13,7 +13,7 @@ const images: { [key: string]: any } = {
 };
 
 const Avatar = ({ image }: AvatarProps) => {
-  const { isLoggedIn } = useApp();
+  const { accessToken } = useAuthStore();
 
   const [hasError, setHasError] = useState(false);
 
@@ -22,8 +22,8 @@ const Avatar = ({ image }: AvatarProps) => {
       return hasError ? FALLBACK_IMAGE : image;
     }
 
-    return isLoggedIn ? images.revou : images.default;
-  }, [image, isLoggedIn, hasError]);
+    return accessToken ? images.revou : images.default;
+  }, [image, accessToken, hasError]);
 
   const onError = useCallback(() => {
     setHasError(true);

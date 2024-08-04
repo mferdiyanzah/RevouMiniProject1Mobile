@@ -3,10 +3,10 @@ import Icon from '@components/atoms/Icon';
 import Input from '@components/atoms/Input';
 import Typography from '@components/atoms/Typography';
 import TYPOGRAPHY from '@constants/typography';
-import { useApp } from '@contexts/app';
 import { MaterialTopTabNavigationProp } from '@react-navigation/material-top-tabs';
 import { CompositeNavigationProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import usePostStore from '@stores/usePostStore';
 import React, { useCallback, useMemo } from 'react';
 import { StyleSheet, TextInput, View } from 'react-native';
 import { IData } from 'types/data';
@@ -22,7 +22,7 @@ type CreatePostScreenProps = {
 };
 
 const CreatePost = ({ navigation }: CreatePostScreenProps) => {
-  const { addFeedData } = useApp();
+  const { addPost } = usePostStore();
 
   const [title, setTitle] = React.useState<string>('');
   const [description, setDescription] = React.useState<string>('');
@@ -48,13 +48,13 @@ const CreatePost = ({ navigation }: CreatePostScreenProps) => {
       time: new Date(),
     };
 
-    addFeedData(newFeedData);
+    addPost(newFeedData);
 
     navigation.navigate('HomeScreen', {
       screen: 'Home',
       params: { screen: 'Terbaru' },
     });
-  }, [addFeedData, navigation, title, description, label]);
+  }, [addPost, navigation, title, description, label]);
 
   const handleChangeLabel = useCallback((value: string) => {
     setLabel(value);

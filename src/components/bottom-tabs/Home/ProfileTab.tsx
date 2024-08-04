@@ -1,24 +1,25 @@
 import Typography from '@components/atoms/Typography';
 import COLORS from '@constants/colors';
 import TYPOGRAPHY from '@constants/typography';
-import { useApp } from '@contexts/app';
-import { useHome } from '@contexts/home';
+import { useNavigation } from '@react-navigation/native';
+import useAuthStore from '@stores/useAuthStore';
 import React, { useEffect } from 'react';
 import { Image, StyleSheet, View } from 'react-native';
+import { StackNavigation } from 'types/navigation';
 
 const ProfileTab = () => {
-  const { isLoggedIn } = useApp();
-  const { navigation } = useHome();
+  const { accessToken } = useAuthStore();
+  const navigation = useNavigation<StackNavigation>();
 
   useEffect(() => {
-    if (!isLoggedIn) {
+    if (!accessToken) {
       navigation.navigate('Login');
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (!isLoggedIn) {
+  if (!accessToken) {
     return null;
   }
 

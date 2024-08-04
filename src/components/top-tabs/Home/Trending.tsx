@@ -1,10 +1,10 @@
-import React, { useMemo, useState, useCallback, useEffect } from 'react';
-import { FlatList, View, ActivityIndicator, StyleSheet } from 'react-native';
 import PostContainer from '@components/organisms/PostContainer';
-import { useApp } from '@contexts/app';
 import { MaterialTopTabScreenProps } from '@react-navigation/material-top-tabs';
-import { TopTabHomeParamList } from 'types/navigation';
+import usePostStore from '@stores/usePostStore';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { ActivityIndicator, FlatList, StyleSheet, View } from 'react-native';
 import { IData } from 'types/data';
+import { TopTabHomeParamList } from 'types/navigation';
 
 type TrendingProps = MaterialTopTabScreenProps<
   TopTabHomeParamList,
@@ -14,19 +14,19 @@ type TrendingProps = MaterialTopTabScreenProps<
 };
 
 const Trending = ({ generateData }: TrendingProps) => {
-  const { feedData } = useApp();
+  const { posts } = usePostStore();
   const [loading, setLoading] = useState(true);
 
   const trendingData = useMemo(() => {
-    const sortedFeedData = [...feedData].sort((a, b) => b.upvotes - a.upvotes);
+    const sortedFeedData = [...posts].sort((a, b) => b.upvotes - a.upvotes);
     return sortedFeedData;
-  }, [feedData]);
+  }, [posts]);
 
   useEffect(() => {
-    if (feedData.length > 0) {
+    if (posts.length > 0) {
       setLoading(false);
     }
-  }, [feedData]);
+  }, [posts]);
 
   const keyExtractor = useCallback((item: IData) => item.id.toString(), []);
 

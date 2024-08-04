@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
+import { BASE_API_URL } from '@utils/config';
 import axios from 'axios';
 
 export interface LoginPayload {
@@ -22,12 +23,13 @@ interface LoginDataResponse {
 const login = async (payload: LoginPayload) => {
   try {
     const response = await axios.post<LoginResponse>(
-      'https://develop.investly.id/api/auth/v2/login',
+      `${BASE_API_URL}/auth/v2/login`,
       payload,
       {
         validateStatus: () => true,
       },
     );
+    console.log(response.data);
     return response.data;
   } catch (error) {
     if (error instanceof Error) {

@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { BASE_API_URL } from '@utils/config';
 import axios from 'axios';
 
 export interface ITopic {
@@ -15,10 +16,14 @@ interface IFile {
 }
 
 const fetchTopics = async () => {
-  const { data } = await axios.get(
-    'https://develop.investly.id/api/social/v1/public/masterdata/topic',
-  );
-  return data.data as ITopic[];
+  try {
+    const { data } = await axios.get(
+      `${BASE_API_URL}/social/v1/public/masterdata/topic`,
+    );
+    return data.data;
+  } catch (error) {
+    return error;
+  }
 };
 
 const useFetchTopics = () =>

@@ -3,39 +3,40 @@ import Button from '@components/atoms/Button';
 import Icon from '@components/atoms/Icon';
 import Input from '@components/atoms/Input';
 import COLORS from '@constants/colors';
-import { useApp } from '@contexts/app';
-import { useHome } from '@contexts/home';
+import { useNavigation } from '@react-navigation/native';
+import useAuthStore from '@stores/useAuthStore';
 import React, { useCallback } from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
+import { StackNavigation } from 'types/navigation';
 
 const ContentCreationCard = () => {
-  const { isLoggedIn } = useApp();
+  const { accessToken } = useAuthStore();
 
-  const { navigation } = useHome();
+  const navigation = useNavigation<StackNavigation>();
 
   const handleAddQuestion = useCallback(() => {
-    if (!isLoggedIn) {
+    if (!accessToken) {
       navigation.navigate('Login');
       return;
     }
     Alert.alert('Add Question');
-  }, [isLoggedIn, navigation]);
+  }, [accessToken, navigation]);
 
   const handleAddPost = useCallback(() => {
-    if (!isLoggedIn) {
+    if (!accessToken) {
       navigation.navigate('Login');
       return;
     }
     navigation.navigate('CreatePost');
-  }, [isLoggedIn, navigation]);
+  }, [accessToken, navigation]);
 
   const handleWhatDoYouWantToAsk = useCallback(() => {
-    if (!isLoggedIn) {
+    if (!accessToken) {
       navigation.navigate('Login');
       return;
     }
     navigation.navigate('CreatePost');
-  }, [isLoggedIn, navigation]);
+  }, [accessToken, navigation]);
 
   return (
     <View style={styles.container}>

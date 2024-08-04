@@ -1,22 +1,24 @@
 import Label from '@components/atoms/Label';
+import Typography from '@components/atoms/Typography';
 import COLORS from '@constants/colors';
 import TYPOGRAPHY from '@constants/typography';
-import { useApp } from '@contexts/app';
+import useAuthStore from '@stores/useAuthStore';
 import React, { useCallback, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { IData } from 'types/data';
-import PostHeader from './PostHeader';
 import ActionPostButton from './ActionPostButton';
-import Typography from '@components/atoms/Typography';
+import PostHeader from './PostHeader';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigation } from 'types/navigation';
 
 interface PostProps {
   data: IData;
-  navigation?: any;
   isDetail?: boolean;
 }
 
-const Post = ({ data, navigation, isDetail = false }: PostProps) => {
-  const { setSelectedPost, isLoggedIn } = useApp();
+const Post = ({ data, isDetail = false }: PostProps) => {
+  const { accessToken } = useAuthStore();
+  const navigation = useNavigation<StackNavigation>();
 
   const [showFullDescription, setShowFullDescription] = useState(false);
 
@@ -34,14 +36,12 @@ const Post = ({ data, navigation, isDetail = false }: PostProps) => {
   const descriptionLimit = 230;
 
   const goToDetail = useCallback(() => {
-    if (!isLoggedIn) {
+    if (!accessToken) {
       navigation.navigate('Login');
       return;
     }
-
-    setSelectedPost(data);
-    navigation.navigate('DetailPost');
-  }, [isLoggedIn, setSelectedPost, data, navigation]);
+    navigation.navigate('DetailPost', { id: data.id });
+  }, [accessToken, data.id, navigation]);
 
   const renderDescription = useCallback(() => {
     const descriptionContent =

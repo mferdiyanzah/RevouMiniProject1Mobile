@@ -3,7 +3,7 @@ import Button from '@components/atoms/Button';
 import Icon from '@components/atoms/Icon';
 import Typography from '@components/atoms/Typography';
 import TYPOGRAPHY from '@constants/typography';
-import { useApp } from '@contexts/app';
+import useAuthStore from '@stores/useAuthStore';
 import timesAgo from '@utils/date';
 import React, { useCallback } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
@@ -15,14 +15,14 @@ interface PostHeaderProps {
 }
 
 const PostHeader = ({ data, navigation }: PostHeaderProps) => {
-  const { isLoggedIn } = useApp();
+  const { accessToken } = useAuthStore();
 
   const handlePressThreeDot = useCallback(() => {
-    if (!isLoggedIn) {
+    if (!accessToken) {
       navigation.navigate('Login');
       return;
     }
-  }, [isLoggedIn, navigation]);
+  }, [accessToken, navigation]);
 
   return (
     <View style={styles.container}>

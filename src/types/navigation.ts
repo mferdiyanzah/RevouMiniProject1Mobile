@@ -4,12 +4,10 @@ export type RootStackParamList = {
   Onboarding: undefined;
   Login: undefined;
   HomeScreen: HomeScreenParamList | undefined;
-  DetailPost: undefined;
+  DetailPost: { id: number };
   CreatePost: undefined;
   Register: undefined;
 };
-
-export type StackNavigation = NavigationProp<RootStackParamList>;
 
 type HomeScreenParamList = {
   screen?: keyof BottomTabParamList;
@@ -25,3 +23,9 @@ export type TopTabHomeParamList = {
   Trending: undefined;
   Terbaru: undefined;
 };
+
+export type StackNavigation = NavigationProp<RootStackParamList>;
+
+export type TopTabStackNavigation = NavigationProp<TopTabHomeParamList>;
+
+export type BottomTabStackNavigation = NavigationProp<BottomTabParamList>;

@@ -1,7 +1,7 @@
 import Icon from '@components/atoms/Icon';
 import COLORS from '@constants/colors';
 import TYPOGRAPHY from '@constants/typography';
-import { useApp } from '@contexts/app';
+import useAuthStore from '@stores/useAuthStore';
 import React, { useCallback, useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Button from '../atoms/Button';
@@ -23,8 +23,7 @@ const ActionPostButton = ({
   downvotes = 0,
   navigation,
 }: ActionPostButtonProps) => {
-  const { isLoggedIn } = useApp();
-
+  const { accessToken } = useAuthStore();
   const iconVariant = useMemo(() => {
     switch (variant) {
       case 'comment':
@@ -39,11 +38,11 @@ const ActionPostButton = ({
   }, [variant]);
 
   const handleClick = useCallback(() => {
-    if (!isLoggedIn) {
+    if (!accessToken) {
       navigation.navigate('Login');
       return;
     }
-  }, [isLoggedIn, navigation]);
+  }, [accessToken, navigation]);
 
   const formatNumberWithSuffix = useCallback((initialValue: number) => {
     if (initialValue < 1000) {

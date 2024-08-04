@@ -1,15 +1,15 @@
 import ContentCreationCard from '@components/molecules/ContentCreationCard';
 import HomeHeader from '@components/molecules/HomeHeader';
 import HomeTopTab from '@components/top-tabs/Home';
-import { useApp } from '@contexts/app';
 import { faker } from '@faker-js/faker';
-import React, { memo, useCallback, useEffect } from 'react';
+import usePostStore from '@stores/usePostStore';
+import React, { memo, useCallback, useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { IData } from 'types/data';
 
 const HomeTab = () => {
-  const { setFeedData } = useApp();
-  const isLoadingRef = React.useRef<boolean>(true);
+  const { setPosts } = usePostStore();
+  const [isPostLoading, setIsPostLoading] = useState<boolean>(true);
 
   useEffect(() => {
     generateData();
@@ -18,7 +18,7 @@ const HomeTab = () => {
   }, []);
 
   const generateData = useCallback(() => {
-    isLoadingRef.current = true;
+    setIsPostLoading(true);
     const data: IData[] = Array.from({ length: 100 }, (_, index) => ({
       id: index,
       avatar: faker.image.urlLoremFlickr({ category: 'people' }),
@@ -34,18 +34,15 @@ const HomeTab = () => {
       shares: faker.number.int(10000),
     }));
 
-    setFeedData(data);
-    isLoadingRef.current = false;
-  }, [setFeedData]);
+    setPosts(data);
+    setIsPostLoading(false);
+  }, [setPosts]);
 
   return (
     <View style={styles.container}>
       <HomeHeader />
       <ContentCreationCard />
-      <HomeTopTab
-        generateData={generateData}
-        isLoading={isLoadingRef.current}
-      />
+      <HomeTopTab generateData={generateData} isLoading={isPostLoading} />
     </View>
   );
 };
