@@ -2,17 +2,17 @@ import Label from '@components/atoms/Label';
 import Typography from '@components/atoms/Typography';
 import COLORS from '@constants/colors';
 import TYPOGRAPHY from '@constants/typography';
+import { useNavigation } from '@react-navigation/native';
 import useAuthStore from '@stores/useAuthStore';
-import React, { useCallback, useState } from 'react';
+import React, { memo, useCallback, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { IData } from 'types/data';
+import { StackNavigation } from 'types/navigation';
+import { IPost } from 'types/post';
 import ActionPostButton from './ActionPostButton';
 import PostHeader from './PostHeader';
-import { useNavigation } from '@react-navigation/native';
-import { StackNavigation } from 'types/navigation';
 
 interface PostProps {
-  data: IData;
+  data: IPost;
   isDetail?: boolean;
 }
 
@@ -46,8 +46,8 @@ const Post = ({ data, isDetail = false }: PostProps) => {
   const renderDescription = useCallback(() => {
     const descriptionContent =
       showFullDescription || isDetail
-        ? data.description
-        : getTruncatedText(data.description, descriptionLimit);
+        ? data.content
+        : getTruncatedText(data.content, descriptionLimit);
 
     const toggleText = showFullDescription
       ? ' Baca lebih sedikit'
@@ -58,29 +58,23 @@ const Post = ({ data, isDetail = false }: PostProps) => {
         <Typography style={styles.postDescription}>
           {descriptionContent}
         </Typography>
-        {!isDetail && data.description.length > descriptionLimit && (
+        {!isDetail && data.content.length > descriptionLimit && (
           <Typography onPress={toggleDescription} style={styles.readMore}>
             {toggleText}
           </Typography>
         )}
       </>
     );
-  }, [
-    showFullDescription,
-    data.description,
-    descriptionLimit,
-    toggleDescription,
-    isDetail,
-  ]);
+  }, [showFullDescription, isDetail, data.content, toggleDescription]);
 
   return (
     <View style={styles.container}>
       <PostHeader data={data} navigation={navigation} />
       <TouchableOpacity style={styles.postDetailContainer} onPress={goToDetail}>
-        <Text style={styles.postTitle}>{data.title}</Text>
+        <Text style={styles.postTitle}>{data.header}</Text>
         <Text style={styles.postDescription}>{renderDescription()}</Text>
         <View>
-          <Label label={data.label} variant="tertiary" color="green" />
+          <Label label={data.topic.label} variant="tertiary" color="green" />
         </View>
       </TouchableOpacity>
       <View style={styles.ctaContainer}>
@@ -91,12 +85,12 @@ const Post = ({ data, isDetail = false }: PostProps) => {
           navigation={navigation}
         />
         <ActionPostButton
-          value={data.comments}
+          value={data.total_comments}
           variant="comment"
           navigation={navigation}
         />
         <ActionPostButton
-          value={data.shares}
+          value={data.reposts}
           variant="share"
           navigation={navigation}
         />
@@ -105,7 +99,7 @@ const Post = ({ data, isDetail = false }: PostProps) => {
   );
 };
 
-export default Post;
+export default memo(Post);
 
 const styles = StyleSheet.create({
   container: {

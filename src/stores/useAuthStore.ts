@@ -1,3 +1,4 @@
+import { Alert } from 'react-native';
 import * as Keychain from 'react-native-keychain';
 import { create } from 'zustand';
 
@@ -34,10 +35,10 @@ const useAuthStore = create<AuthStore>(set => ({
         'accessToken',
         accessToken,
         accessTokenOptions,
-      ).then(() => console.log('set access token'));
+      );
       set({ accessToken });
     } catch (error) {
-      console.error('Failed to set access token:', error);
+      Alert.alert('Error set access token');
     }
   },
   setRefreshToken: async (refreshToken: string) => {
@@ -50,10 +51,10 @@ const useAuthStore = create<AuthStore>(set => ({
         'refreshToken',
         refreshToken,
         refreshTokenOptions,
-      ).then(() => console.log('set refresh token'));
+      );
       set({ refreshToken });
     } catch (error) {
-      console.error('Failed to set refresh token:', error);
+      Alert.alert('Error set refresh token');
     }
   },
   getCredentials: async () => {
@@ -80,8 +81,6 @@ const useAuthStore = create<AuthStore>(set => ({
           accessToken: credentialAccessToken.password,
         };
 
-        console.log('get credentials', credentials);
-
         set(credentials);
         return credentials;
       }
@@ -95,7 +94,7 @@ const useAuthStore = create<AuthStore>(set => ({
       await Keychain.resetGenericPassword();
       set({ accessToken: null, refreshToken: null });
     } catch (error) {
-      console.error('Failed to reset tokens:', error);
+      Alert.alert('Error reset credentials');
     }
   },
 }));

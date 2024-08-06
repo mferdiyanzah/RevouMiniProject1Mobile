@@ -1,41 +1,42 @@
+import { IPost } from 'types/post';
 import { create } from 'zustand';
 
-interface IPost {
-  id: number;
-  avatar: string;
-  name: string;
-  position: string;
-  time: Date;
-  title: string;
-  description: string;
-  label: string;
-  upvotes: number;
-  downvotes: number;
-  comments: number;
-  shares: number;
-}
-
 interface PostStore {
-  posts: IPost[];
-  setPosts: (posts: IPost[]) => void;
-  getPostById: (id: number) => IPost | undefined;
-  addPost: (post: IPost) => void;
-  updatePost: (id: number, updatedPost: Partial<IPost>) => void;
+  trendingPosts: IPost[];
+  newestPosts: IPost[];
+  setTrendingPosts: (posts: IPost[]) => void;
+  setNewestPosts: (posts: IPost[]) => void;
+  upvotePost: (id: string) => void;
+  downvotePost: (id: string) => void;
   reset: () => void;
 }
 
-const usePostStore = create<PostStore>((set, get) => ({
-  posts: [],
-  setPosts: posts => set({ posts }),
-  getPostById: id => get().posts.find(post => post.id === id),
-  addPost: post => set(state => ({ posts: [...state.posts, post] })),
-  updatePost: (id, updatedPost) =>
+const usePostStore = create<PostStore>(set => ({
+  trendingPosts: [],
+  newestPosts: [],
+  setTrendingPosts: posts => set({ trendingPosts: posts }),
+  setNewestPosts: posts => set({ newestPosts: posts }),
+  upvotePost: id => {
     set(state => ({
-      posts: state.posts.map(post =>
-        post.id === id ? { ...post, ...updatedPost } : post,
+      trendingPosts: state.trendingPosts.map(post =>
+        post.id === id ? { ...post, upvotes: post.upvotes + 1 } : post,
       ),
-    })),
-  reset: () => set({ posts: [] }),
+      newestPosts: state.newestPosts.map(post =>
+        post.id === id ? { ...post, upvotes: post.upvotes + 1 } : post,
+      ),
+    }));
+  },
+  downvotePost: id => {
+    set(state => ({
+      trendingPosts: state.trendingPosts.map(post =>
+        post.id === id ? { ...post, downvotes: post.downvotes + 1 } : post,
+      ),
+      newestPosts: state.newestPosts.map(post =>
+        post.id === id ? { ...post, downvotes: post.downvotes + 1 } : post,
+      ),
+    }));
+  },
+  reset: () => set({ trendingPosts: [], newestPosts: [] }),
 }));
 
 export default usePostStore;

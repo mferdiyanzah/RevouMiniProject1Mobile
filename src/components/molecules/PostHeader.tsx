@@ -4,13 +4,12 @@ import Icon from '@components/atoms/Icon';
 import Typography from '@components/atoms/Typography';
 import TYPOGRAPHY from '@constants/typography';
 import useAuthStore from '@stores/useAuthStore';
-import timesAgo from '@utils/date';
 import React, { useCallback } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { IData } from 'types/data';
+import { IPost } from 'types/post';
 
 interface PostHeaderProps {
-  data: IData;
+  data: IPost;
   navigation?: any;
 }
 
@@ -27,15 +26,15 @@ const PostHeader = ({ data, navigation }: PostHeaderProps) => {
   return (
     <View style={styles.container}>
       <View>
-        <Avatar image={data.avatar} />
+        <Avatar image={data.user?.profile_path} />
       </View>
 
       <View style={styles.postProfileContainer}>
         <Typography type="heading" size="xSmall" style={styles.name}>
-          {data.name}
+          {data.user?.name}
         </Typography>
-        <Text style={styles.description}>{data.position}</Text>
-        <Text style={styles.description}>{timesAgo(data.time)}</Text>
+        <Text style={styles.description}>{data.user?.bio || '-'}</Text>
+        <Text style={styles.description}>{data.time}</Text>
       </View>
       <View>
         <Button

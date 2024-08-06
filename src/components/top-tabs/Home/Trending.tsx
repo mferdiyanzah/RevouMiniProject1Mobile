@@ -1,49 +1,64 @@
 import PostContainer from '@components/organisms/PostContainer';
-import { MaterialTopTabScreenProps } from '@react-navigation/material-top-tabs';
+import useFetchPosts from '@hooks/queries/useFetchPosts';
 import usePostStore from '@stores/usePostStore';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, StyleSheet, View } from 'react-native';
-import { IData } from 'types/data';
-import { TopTabHomeParamList } from 'types/navigation';
+import { IPost } from 'types/post';
 
-type TrendingProps = MaterialTopTabScreenProps<
-  TopTabHomeParamList,
-  'Trending'
-> & {
-  generateData: () => void;
-};
+const Trending = () => {
+  const { trendingPosts, setTrendingPosts } = usePostStore();
+  const [page, setPage] = useState(1);
 
-const Trending = ({ generateData }: TrendingProps) => {
-  const { posts } = usePostStore();
-  const [loading, setLoading] = useState(true);
-
-  const trendingData = useMemo(() => {
-    const sortedFeedData = [...posts].sort((a, b) => b.upvotes - a.upvotes);
-    return sortedFeedData;
-  }, [posts]);
+  const {
+    isPending: loading,
+    data: postData,
+    refetch,
+  } = useFetchPosts({
+    sort_by: 'engagement',
+    perpage: 10,
+    page,
+  });
 
   useEffect(() => {
-    if (posts.length > 0) {
-      setLoading(false);
-    }
-  }, [posts]);
+    refetch();
 
-  const keyExtractor = useCallback((item: IData) => item.id.toString(), []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page]);
+
+  useEffect(() => {
+    if (!loading && postData) {
+      const newTrendingPosts =
+        page === 1 ? postData : [...trendingPosts, ...postData];
+      setTrendingPosts(newTrendingPosts);
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading, postData]);
+
+  const keyExtractor = useCallback((item: IPost) => item.id.toString(), []);
 
   const renderItem = useCallback(
-    ({ item, index }: { item: IData; index: number }) => (
+    ({ item, index }: { item: IPost; index: number }) => (
       <PostContainer
         item={item}
-        isLastIndex={index === trendingData.length - 1}
+        isLastIndex={index === trendingPosts.length - 1}
       />
     ),
-    [trendingData.length],
+    [trendingPosts.length],
   );
 
-  if (loading) {
+  const handleEndReached = useCallback(() => {
+    setPage(page + 1);
+  }, [page]);
+
+  const handleOnRefresh = useCallback(() => {
+    setPage(1);
+  }, []);
+
+  if (loading && page === 1) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
+        <ActivityIndicator />
       </View>
     );
   }
@@ -51,11 +66,14 @@ const Trending = ({ generateData }: TrendingProps) => {
   return (
     <View>
       <FlatList
-        data={trendingData}
+        data={trendingPosts}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
-        onRefresh={generateData}
+        onRefresh={handleOnRefresh}
         refreshing={loading}
+        onEndReached={handleEndReached}
+        onEndReachedThreshold={0.8}
+        maxToRenderPerBatch={10}
       />
     </View>
   );

@@ -4,7 +4,7 @@ export type RootStackParamList = {
   Onboarding: undefined;
   Login: undefined;
   HomeScreen: HomeScreenParamList | undefined;
-  DetailPost: { id: number };
+  DetailPost: { id: string };
   CreatePost: undefined;
   Register: undefined;
 };

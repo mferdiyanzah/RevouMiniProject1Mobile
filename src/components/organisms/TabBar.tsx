@@ -2,8 +2,9 @@ import Icon, { IconVariant } from '@components/atoms/Icon';
 import Typography from '@components/atoms/Typography';
 import COLORS from '@constants/colors';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
-import React, { memo } from 'react';
+import React from 'react';
 import { StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
+import CodePush from 'react-native-code-push';
 
 const TabBar: React.FC<BottomTabBarProps> = ({
   state,
@@ -85,6 +86,8 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
+    borderTopColor: COLORS.neutral300,
+    borderTopWidth: 1,
   },
   tab: {
     flex: 1,
@@ -102,4 +105,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default memo(TabBar);
+export default CodePush(TabBar);

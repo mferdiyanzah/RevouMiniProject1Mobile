@@ -5,19 +5,14 @@ import {
   MaterialTopTabNavigationOptions,
 } from '@react-navigation/material-top-tabs';
 import React, { useMemo } from 'react';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { TopTabHomeParamList } from 'types/navigation';
 import Newest from './Newest';
 import Trending from './Trending';
 
 const TopTab = createMaterialTopTabNavigator<TopTabHomeParamList>();
 
-interface HomeTopTabProps {
-  generateData: () => void;
-  isLoading: boolean;
-}
-
-const HomeTopTab = ({ generateData, isLoading }: HomeTopTabProps) => {
+const HomeTopTab = () => {
   const screenOptions: MaterialTopTabNavigationOptions = useMemo(
     () => ({
       tabBarActiveTintColor: COLORS.primary,
@@ -29,24 +24,16 @@ const HomeTopTab = ({ generateData, isLoading }: HomeTopTabProps) => {
     [],
   );
 
-  if (isLoading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={COLORS.primary} />
-      </View>
-    );
-  }
-
   return (
     <TopTab.Navigator screenOptions={screenOptions}>
       <TopTab.Screen
         name="Trending"
-        children={props => <Trending {...props} generateData={generateData} />}
+        component={Trending}
         options={{ tabBarLabel: 'Trending' }}
       />
       <TopTab.Screen
         name="Terbaru"
-        children={props => <Newest {...props} generateData={generateData} />}
+        component={Newest}
         options={{ tabBarLabel: 'Terbaru' }}
       />
     </TopTab.Navigator>

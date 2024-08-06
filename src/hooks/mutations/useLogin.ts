@@ -29,7 +29,6 @@ const login = async (payload: LoginPayload) => {
         validateStatus: () => true,
       },
     );
-    console.log(response.data);
     return response.data;
   } catch (error) {
     if (error instanceof Error) {

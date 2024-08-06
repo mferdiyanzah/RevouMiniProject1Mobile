@@ -1,46 +1,63 @@
 import PostContainer from '@components/organisms/PostContainer';
-import { MaterialTopTabScreenProps } from '@react-navigation/material-top-tabs';
+import useFetchPosts from '@hooks/queries/useFetchPosts';
 import usePostStore from '@stores/usePostStore';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { ActivityIndicator, FlatList, View } from 'react-native';
-import { IData } from 'types/data';
-import { TopTabHomeParamList } from 'types/navigation';
+import React, { useCallback, useEffect, useState } from 'react';
+import { ActivityIndicator, FlatList, StyleSheet, View } from 'react-native';
+import { IPost } from 'types/post';
 
-type NewestProps = MaterialTopTabScreenProps<TopTabHomeParamList, 'Terbaru'> & {
-  generateData: () => void;
-};
+const Newest = () => {
+  const { newestPosts, setNewestPosts } = usePostStore();
+  const [page, setPage] = useState(1);
 
-const Newest = ({ generateData }: NewestProps) => {
-  const { posts } = usePostStore();
-  const [loading, setLoading] = useState<boolean>(true);
-
-  const newestData = useMemo(() => {
-    const copyFeedData = [...posts];
-    return copyFeedData.sort((a, b) => b.time.getTime() - a.time.getTime());
-  }, [posts]);
+  const {
+    isPending: loading,
+    data: newestData,
+    refetch,
+  } = useFetchPosts({
+    sort_by: 'created_at',
+    perpage: 10,
+    page,
+  });
 
   useEffect(() => {
-    if (posts.length > 0) {
-      setLoading(false);
-    }
-  }, [posts]);
+    refetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page]);
 
-  const keyExtractor = useCallback((item: IData) => item.id.toString(), []);
+  useEffect(() => {
+    if (!loading && newestData) {
+      const newNewestPosts =
+        page === 1 ? newestData : [...newestPosts, ...newestData];
+      setNewestPosts(newNewestPosts);
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading, newestData]);
+
+  const keyExtractor = useCallback((item: IPost) => item.id.toString(), []);
 
   const renderItem = useCallback(
-    ({ item, index }: { item: IData; index: number }) => (
+    ({ item, index }: { item: IPost; index: number }) => (
       <PostContainer
         item={item}
-        isLastIndex={index === newestData.length - 1}
+        isLastIndex={index === newestPosts.length - 1}
       />
     ),
-    [newestData.length],
+    [newestPosts.length],
   );
 
-  if (loading) {
+  const handleEndReached = useCallback(() => {
+    setPage(page + 1);
+  }, [page]);
+
+  const handleOnRefresh = useCallback(() => {
+    setPage(1);
+  }, []);
+
+  if (loading && page === 1) {
     return (
-      <View>
-        <ActivityIndicator size="large" color="#0000ff" />
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator />
       </View>
     );
   }
@@ -49,13 +66,25 @@ const Newest = ({ generateData }: NewestProps) => {
     <View>
       <FlatList
         data={newestData}
+        initialNumToRender={5}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
-        onRefresh={generateData}
-        refreshing={false}
+        onRefresh={handleOnRefresh}
+        refreshing={loading}
+        onEndReached={handleEndReached}
+        onEndReachedThreshold={0.8}
+        maxToRenderPerBatch={10}
       />
     </View>
   );
 };
 
 export default React.memo(Newest);
+
+const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});

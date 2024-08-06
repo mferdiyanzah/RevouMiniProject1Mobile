@@ -2,15 +2,15 @@ import Typography from '@components/atoms/Typography';
 import Post from '@components/molecules/Post';
 import COLORS from '@constants/colors';
 import useAuthStore from '@stores/useAuthStore';
-import React from 'react';
+import React, { memo } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { IData } from 'types/data';
+import { IPost } from 'types/post';
 
 const PostContainer = ({
   item,
   isLastIndex,
 }: {
-  item: IData;
+  item: IPost;
   isLastIndex: boolean;
 }) => {
   const { accessToken } = useAuthStore();
@@ -45,4 +45,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default React.memo(PostContainer);
+export default memo(PostContainer);
