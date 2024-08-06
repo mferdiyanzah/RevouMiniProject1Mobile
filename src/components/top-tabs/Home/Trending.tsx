@@ -8,22 +8,18 @@ import { IPost } from 'types/post';
 const Trending = () => {
   const { trendingPosts, setTrendingPosts } = usePostStore();
   const [page, setPage] = useState(1);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const {
     isPending: loading,
     data: postData,
-    refetch,
+    isLoadingForFirstTime,
   } = useFetchPosts({
     sort_by: 'engagement',
     perpage: 10,
     page,
+    key: refreshKey,
   });
-
-  useEffect(() => {
-    refetch();
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page]);
 
   useEffect(() => {
     if (!loading && postData) {
@@ -53,9 +49,10 @@ const Trending = () => {
 
   const handleOnRefresh = useCallback(() => {
     setPage(1);
+    setRefreshKey(Math.random());
   }, []);
 
-  if (loading && page === 1) {
+  if (isLoadingForFirstTime) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator />

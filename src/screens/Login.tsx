@@ -7,23 +7,19 @@ import useLogin, { LoginResponse } from '@hooks/mutations/useLogin';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import VALIDATOR from '@utils/validator';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import {
-  ActivityIndicator,
-  Alert,
-  StyleSheet,
-  ToastAndroid,
-  View,
-} from 'react-native';
+import { Alert, StyleSheet, ToastAndroid, View } from 'react-native';
 import { RootStackParamList } from 'types/navigation';
 
 import analytics from '@react-native-firebase/analytics';
 
+import Loader from '@components/atoms/Loader';
+import COLORS from '@constants/colors';
 import useAuthStore from '@stores/useAuthStore';
 
 type LoginProps = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
 const Login = ({ navigation }: LoginProps) => {
-  const { mutateAsync: onLogin, isPending: isLoginProcess } = useLogin();
+  const { mutateAsync: onLogin } = useLogin();
 
   const { setAccessToken, setRefreshToken } = useAuthStore();
 
@@ -32,6 +28,8 @@ const Login = ({ navigation }: LoginProps) => {
 
   const [password, setPassword] = useState<string>('');
   const [passwordErrorMessage, setPasswordErrorMessage] = useState<string>('');
+
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const emailValidatorResponse = VALIDATOR.email(email);
@@ -53,6 +51,7 @@ const Login = ({ navigation }: LoginProps) => {
   }, [navigation]);
 
   const handleLogin = useCallback(async () => {
+    setIsLoading(true);
     const loginPayload = { email, password };
 
     const response = (await onLogin(loginPayload)) as LoginResponse;
@@ -63,6 +62,8 @@ const Login = ({ navigation }: LoginProps) => {
       await analytics().logEvent('success_login_account', loginPayload);
       setAccessToken(response.data.access_token);
       setRefreshToken(response.data.refresh_token);
+
+      setIsLoading(false);
       navigation.reset({
         index: 0,
         routes: [{ name: 'HomeScreen' }],
@@ -137,7 +138,7 @@ const Login = ({ navigation }: LoginProps) => {
         <Button
           onPress={handleLogin}
           width="full"
-          label={isLoginProcess ? <ActivityIndicator /> : 'Masuk'}
+          label="Masuk"
           variant="primary"
           size="medium"
           disabled={isLoginButtonDisabled}
@@ -147,11 +148,12 @@ const Login = ({ navigation }: LoginProps) => {
         <Button
           onPress={goToRegister}
           width="full"
-          label="Daftar"
+          label={isLoading ? 'Loading...' : 'Daftar'}
           variant="outline"
           size="medium"
         />
       </View>
+      <Loader isLoading={isLoading} />
     </View>
   );
 };
@@ -190,5 +192,13 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     justifyContent: 'flex-end',
+  },
+  loadingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: COLORS.neutral100,
+    opacity: 0.5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1,
   },
 });

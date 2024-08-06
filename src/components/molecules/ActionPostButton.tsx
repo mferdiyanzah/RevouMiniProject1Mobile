@@ -12,16 +12,16 @@ interface ActionPostButtonProps {
   variant: ButtonVariant;
   value?: number;
   upvotes?: number;
-  downvotes?: number;
   navigation?: any;
+  onClick?: () => void;
 }
 
 const ActionPostButton = ({
   variant,
   value = 0,
   upvotes = 0,
-  downvotes = 0,
   navigation,
+  onClick,
 }: ActionPostButtonProps) => {
   const { accessToken } = useAuthStore();
   const iconVariant = useMemo(() => {
@@ -42,28 +42,35 @@ const ActionPostButton = ({
       navigation.navigate('Login');
       return;
     }
-  }, [accessToken, navigation]);
 
-  const formatNumberWithSuffix = useCallback((initialValue: number) => {
-    if (initialValue < 1000) {
-      return initialValue.toString();
-    }
+    onClick?.();
+  }, [accessToken, navigation, onClick]);
 
-    const suffixes = ['', 'K', 'M', 'B', 'T'];
-    const suffixNum = Math.floor(('' + initialValue).length / 3);
-    let shortValue = parseFloat(
-      (suffixNum !== 0
-        ? initialValue / Math.pow(1000, suffixNum)
-        : initialValue
-      ).toPrecision(2),
-    );
+  const formatNumberWithSuffix = useCallback(
+    (initialValue: number) => {
+      if (initialValue < 1000) {
+        return initialValue.toString();
+      }
 
-    if (shortValue % 1 !== 0) {
-      shortValue = parseFloat(shortValue.toFixed(1));
-    }
+      const suffixes = ['', 'K', 'M', 'B', 'T'];
+      const suffixNum = Math.floor(('' + initialValue).length / 3);
+      let shortValue = parseFloat(
+        (suffixNum !== 0
+          ? initialValue / Math.pow(1000, suffixNum)
+          : initialValue
+        ).toPrecision(2),
+      );
 
-    return shortValue + suffixes[suffixNum];
-  }, []);
+      if (shortValue % 1 !== 0) {
+        shortValue = parseFloat(shortValue.toFixed(1));
+      }
+
+      return shortValue + suffixes[suffixNum];
+    },
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [upvotes, value],
+  );
 
   return (
     <View style={styles.container}>
@@ -87,8 +94,7 @@ const ActionPostButton = ({
               icon={
                 <Icon variant="up-arrow" size={16} style={styles.downArrow} />
               }
-              iconPosition="left"
-              label={formatNumberWithSuffix(downvotes)}
+              iconPosition="only"
               labelStyle={styles.value}
             />
           </View>

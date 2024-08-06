@@ -1,29 +1,13 @@
-import useAuthStore from '@stores/useAuthStore';
 import { useMutation } from '@tanstack/react-query';
-import { BASE_API_URL } from '@utils/config';
-import axios, { AxiosError } from 'axios';
+import { AxiosError } from 'axios';
+import axiosWithAuth from './helper';
 
-interface ICreatePostPayload {
+export interface ICreatePostPayload {
   content: string;
   header: string;
   is_anonim: boolean;
   topic_id: string;
 }
-
-const axiosWithAuth = axios.create({
-  baseURL: BASE_API_URL,
-  headers: {
-    'Content-Type': 'multipart/form-data',
-  },
-});
-
-axiosWithAuth.interceptors.request.use(config => {
-  const accessToken = useAuthStore.getState().accessToken;
-  if (accessToken) {
-    config.headers.Authorization = `Bearer ${accessToken}`;
-  }
-  return config;
-});
 
 const createPost = async (payload: ICreatePostPayload) => {
   const payloadFormData = new FormData();

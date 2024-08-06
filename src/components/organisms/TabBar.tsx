@@ -51,7 +51,7 @@ const TabBar: React.FC<BottomTabBarProps> = ({
               variant={iconVariant}
               style={
                 {
-                  color: isFocused ? COLORS.primary : COLORS.gray,
+                  color: isFocused ? COLORS.primary : COLORS.neutral400,
                 } as ViewStyle
               }
             />
@@ -98,10 +98,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   labelFocused: {
-    color: '#0000FF',
+    color: COLORS.primary,
   },
   labelUnfocused: {
-    color: '#888888',
+    color: COLORS.neutral400,
   },
 });
 

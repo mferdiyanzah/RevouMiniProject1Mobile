@@ -17,7 +17,10 @@ import {
 } from 'react-native';
 import AuthHeader from './AuthHeader';
 
-import useRegister, { RegisterResponse } from '@hooks/mutations/useRegister';
+import useRegister, {
+  RegisterPayload,
+  RegisterResponse,
+} from '@hooks/mutations/useRegister';
 import analytics from '@react-native-firebase/analytics';
 import { useNavigation } from '@react-navigation/native';
 import useAuthStore from '@stores/useAuthStore';
@@ -29,18 +32,15 @@ const InterestTopicSelection = () => {
   const { email, name, username, password, setCurrentStep } =
     useRegisterStore();
 
-  const { setAccessToken, setRefreshToken } = useAuthStore();
+  const { setAccessToken, setRefreshToken, setExpiredAt, setUsername } =
+    useAuthStore();
 
   const navigation = useNavigation<StackNavigation>();
 
-  const {
-    mutateAsync: register,
-    isError: isRegisterError,
-    isSuccess: isRegisterSuccess,
-  } = useRegister();
+  const { mutateAsync: register, isPending: isRegisterPending } = useRegister();
 
   const { data: responseData, isLoading } = useFetchTopics();
-  const [selectedTopic, setSelectedTopic] = useState<string[]>([]);
+  const [selectedTopic, setSelectedTopic] = useState<ITopic[]>([]);
 
   const handleClickTopic = async (isSelected: boolean, topic: ITopic) => {
     const analyticProperties = {
@@ -57,7 +57,7 @@ const InterestTopicSelection = () => {
         analyticProperties,
       );
       setSelectedTopic(prev =>
-        prev.filter(selectedTopicId => selectedTopicId !== topic.id),
+        prev.filter(prevTopic => prevTopic.id !== topic.id),
       );
     } else {
       if (selectedTopic.length < 3) {
@@ -65,7 +65,7 @@ const InterestTopicSelection = () => {
           'click_register_select_topic_id',
           analyticProperties,
         );
-        setSelectedTopic(prev => [...prev, topic.id]);
+        setSelectedTopic(prev => [...prev, topic]);
       } else {
         ToastAndroid.show(
           'Anda hanya bisa memilih 3 topik',
@@ -78,7 +78,7 @@ const InterestTopicSelection = () => {
   const renderImages: ListRenderItem<ITopic> = ({ item, index }) => {
     const isFirstRow = index < 3;
 
-    const isSelected = selectedTopic.includes(item.id);
+    const isSelected = selectedTopic.some(topic => topic.id === item.id);
     const imageStyle = [styles.image, isSelected && styles.activeTopic];
     const labelStyle = [
       styles.topicLabel,
@@ -116,37 +116,47 @@ const InterestTopicSelection = () => {
   }, [setCurrentStep]);
 
   const handleRegister = useCallback(async () => {
-    const payload = {
+    const payload: RegisterPayload = {
       username: username as string,
       name: name as string,
       email: email as string,
       password: password as string,
-      favorite_topic_ids: selectedTopic as string[],
+      favorite_topic_ids: selectedTopic.map(topic => topic.id),
     };
 
-    const response = (await register(payload)) as RegisterResponse;
-
-    if (isRegisterError) {
-      ToastAndroid.show('Gagal mendaftar', ToastAndroid.SHORT);
-    }
-
-    if (isRegisterSuccess && response) {
+    try {
+      const response = (await register(payload)) as any;
+      const data = response.data as RegisterResponse;
       ToastAndroid.show('Berhasil mendaftar', ToastAndroid.SHORT);
-      setAccessToken(response.access_token);
-      setRefreshToken(response.refresh_token);
+
+      setAccessToken(data.access_token);
+      setRefreshToken(data.refresh_token);
+      setExpiredAt(data.expired_at);
+      setUsername(username as string);
+
+      await analytics().logEvent('success_register_account', {
+        email,
+        name,
+        username,
+        topic_id: selectedTopic.map(topic => topic.id.slice(0, 8)).join(','),
+        topic_name: selectedTopic.map(topic => topic.label).join(','),
+      });
+
       navigation.navigate('HomeScreen');
+    } catch (error) {
+      ToastAndroid.show('Gagal mendaftar', ToastAndroid.SHORT);
     }
   }, [
     email,
-    isRegisterError,
-    isRegisterSuccess,
     name,
     navigation,
     password,
     register,
     selectedTopic,
     setAccessToken,
+    setExpiredAt,
     setRefreshToken,
+    setUsername,
     username,
   ]);
 
@@ -194,6 +204,11 @@ const InterestTopicSelection = () => {
           onPress={handleRegister}
         />
       </View>
+      {isRegisterPending && (
+        <View style={styles.loadingOverlay}>
+          <ActivityIndicator size="large" color={COLORS.primary} />
+        </View>
+      )}
     </View>
   );
 };
@@ -261,5 +276,13 @@ const styles = StyleSheet.create({
     height: 4,
     backgroundColor: COLORS.primary,
     width: '100%',
+  },
+  loadingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: COLORS.neutral100,
+    opacity: 0.5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1,
   },
 });

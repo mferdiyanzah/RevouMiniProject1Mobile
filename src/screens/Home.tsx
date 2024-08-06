@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
   },
   promoContainer: {
     position: 'absolute',
-    bottom: 68,
+    bottom: 90,
     left: 0,
     right: 0,
     height: 50,

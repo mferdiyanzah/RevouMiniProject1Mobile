@@ -1,15 +1,20 @@
-import Typography from '@components/atoms/Typography';
+import Button from '@components/atoms/Button';
+import Loader from '@components/atoms/Loader';
 import COLORS from '@constants/colors';
 import TYPOGRAPHY from '@constants/typography';
+import useLogout from '@hooks/mutations/useLogout';
+import analytics from '@react-native-firebase/analytics';
 import { useNavigation } from '@react-navigation/native';
 import useAuthStore from '@stores/useAuthStore';
-import React, { useEffect } from 'react';
-import { Image, StyleSheet, View } from 'react-native';
+import React, { useCallback, useEffect } from 'react';
+import { StyleSheet, ToastAndroid, View } from 'react-native';
 import { StackNavigation } from 'types/navigation';
 
 const ProfileTab = () => {
-  const { accessToken } = useAuthStore();
+  const { accessToken, reset, username } = useAuthStore();
   const navigation = useNavigation<StackNavigation>();
+
+  const { mutateAsync: logout, isPending: isLogoutProcessing } = useLogout();
 
   useEffect(() => {
     if (!accessToken) {
@@ -19,14 +24,40 @@ const ProfileTab = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const handleReset = useCallback(async () => {
+    await logout()
+      .then(async () => {
+        await analytics().logEvent('click_logout', {
+          username,
+        });
+        reset();
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Login' }],
+        });
+      })
+      .catch(error => {
+        ToastAndroid.show(error.message, ToastAndroid.SHORT);
+      });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reset]);
+
   if (!accessToken) {
     return null;
   }
 
   return (
     <View style={styles.container}>
-      <Image source={require('@assets/images/coming-soon.png')} />
-      <Typography style={styles.comingSoontText}>Coming Soon</Typography>
+      <View style={styles.buttonContainer}>
+        <Button
+          size="large"
+          label="Logout"
+          variant="primary"
+          onPress={handleReset}
+        />
+      </View>
+      <Loader isLoading={isLogoutProcessing} />
     </View>
   );
 };
@@ -36,10 +67,14 @@ export default ProfileTab;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: COLORS.neutral100,
-    gap: 20,
+    width: '100%',
+    paddingHorizontal: 20,
+  },
+  buttonContainer: {
+    flex: 1,
+    width: '100%',
+    justifyContent: 'center',
   },
   comingSoontText: {
     ...TYPOGRAPHY.heading.xxLarge,

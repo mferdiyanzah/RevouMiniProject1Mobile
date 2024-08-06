@@ -16,12 +16,12 @@ const usePostStore = create<PostStore>(set => ({
   newestPosts: [],
   setTrendingPosts: posts => set({ trendingPosts: posts }),
   setNewestPosts: posts => set({ newestPosts: posts }),
-  upvotePost: id => {
+  upvotePost: (id: string) => {
     set(state => ({
-      trendingPosts: state.trendingPosts.map(post =>
+      newestPosts: state.newestPosts.map(post =>
         post.id === id ? { ...post, upvotes: post.upvotes + 1 } : post,
       ),
-      newestPosts: state.newestPosts.map(post =>
+      trendingPosts: state.trendingPosts.map(post =>
         post.id === id ? { ...post, upvotes: post.upvotes + 1 } : post,
       ),
     }));

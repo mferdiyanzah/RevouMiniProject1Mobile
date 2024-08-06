@@ -87,6 +87,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 96,
     height: 'auto',
+    gap: 2,
   },
   text: {
     fontWeight: '700',

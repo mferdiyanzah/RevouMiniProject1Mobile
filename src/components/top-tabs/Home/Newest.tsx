@@ -8,27 +8,24 @@ import { IPost } from 'types/post';
 const Newest = () => {
   const { newestPosts, setNewestPosts } = usePostStore();
   const [page, setPage] = useState(1);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const {
     isPending: loading,
     data: newestData,
-    refetch,
+    isLoadingForFirstTime,
   } = useFetchPosts({
     sort_by: 'created_at',
     perpage: 10,
     page,
+    key: refreshKey,
   });
 
   useEffect(() => {
-    refetch();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page]);
-
-  useEffect(() => {
     if (!loading && newestData) {
-      const newNewestPosts =
+      const newTrendingPosts =
         page === 1 ? newestData : [...newestPosts, ...newestData];
-      setNewestPosts(newNewestPosts);
+      setNewestPosts(newTrendingPosts);
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -52,9 +49,10 @@ const Newest = () => {
 
   const handleOnRefresh = useCallback(() => {
     setPage(1);
+    setRefreshKey(Math.random());
   }, []);
 
-  if (loading && page === 1) {
+  if (isLoadingForFirstTime) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator />
@@ -65,8 +63,7 @@ const Newest = () => {
   return (
     <View>
       <FlatList
-        data={newestData}
-        initialNumToRender={5}
+        data={newestPosts}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
         onRefresh={handleOnRefresh}

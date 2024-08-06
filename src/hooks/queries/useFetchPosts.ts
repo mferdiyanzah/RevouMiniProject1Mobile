@@ -3,42 +3,46 @@ import { useQuery } from '@tanstack/react-query';
 import { BASE_API_URL } from '@utils/config';
 import axios from 'axios';
 import { IPost } from 'types/post';
+import { useState, useEffect } from 'react';
 
 interface IFetchPostsParams {
   sort_by: 'engagement' | 'created_at';
   page: number;
   perpage: number;
+  key: number;
 }
 
 const fetchPosts = async (params: IFetchPostsParams): Promise<IPost[]> => {
-  try {
-    console.log(params, 'params');
-    const { data } = await axios.get(`${BASE_API_URL}/social/v2/feed`, {
-      params,
-    });
+  const { data } = await axios.get(`${BASE_API_URL}/social/v2/feed`, {
+    params,
+  });
 
-    const postData = data.data as IPost[];
+  const postData = data.data as IPost[];
 
-    const generatedPost = postData.map(post => ({
-      ...post,
-      downvotes: faker.number.int(100),
-    }));
-
-    return generatedPost;
-  } catch (error) {
-    throw error;
-  }
+  return postData.map(post => ({
+    ...post,
+    downvotes: faker.number.int(100),
+  }));
 };
 
-const useFetchPosts = (params: IFetchPostsParams) =>
-  useQuery<IPost[], Error>({
+const useFetchPosts = (params: IFetchPostsParams) => {
+  const [isLoadingForFirstTime, setIsLoadingForFirstTime] = useState(true);
+
+  const query = useQuery<IPost[], Error>({
     queryKey: ['posts', params],
     queryFn: () => fetchPosts(params),
-    retry: false,
-    refetchOnWindowFocus: false,
-    refetchOnMount: false,
-    retryOnMount: false,
-    enabled: false,
   });
+
+  useEffect(() => {
+    if (!query.isPending && isLoadingForFirstTime) {
+      setIsLoadingForFirstTime(false);
+    }
+  }, [isLoadingForFirstTime, query.isPending]);
+
+  return {
+    ...query,
+    isLoadingForFirstTime,
+  };
+};
 
 export default useFetchPosts;

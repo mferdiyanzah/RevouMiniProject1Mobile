@@ -1,15 +1,19 @@
 import Button from '@components/atoms/Button';
 import Icon from '@components/atoms/Icon';
-import Input from '@components/atoms/Input';
+import Loader from '@components/atoms/Loader';
 import Typography from '@components/atoms/Typography';
 import COLORS from '@constants/colors';
 import TYPOGRAPHY from '@constants/typography';
+import useCreatePost, {
+  ICreatePostPayload,
+} from '@hooks/mutations/useCreatePost';
+import useFetchTopics from '@hooks/queries/useFetchTopics';
 import { MaterialTopTabNavigationProp } from '@react-navigation/material-top-tabs';
 import { CompositeNavigationProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React, { useCallback, useMemo } from 'react';
-import { StyleSheet, TextInput, View } from 'react-native';
-import { IData } from 'types/data';
+import React, { useCallback, useMemo, useState } from 'react';
+import { StyleSheet, TextInput, ToastAndroid, View } from 'react-native';
+import { Dropdown } from 'react-native-element-dropdown';
 import { RootStackParamList, TopTabHomeParamList } from 'types/navigation';
 
 type CreatePostProps = CompositeNavigationProp<
@@ -22,53 +26,43 @@ type CreatePostScreenProps = {
 };
 
 const CreatePost = ({ navigation }: CreatePostScreenProps) => {
-  const [title, setTitle] = React.useState<string>('');
-  const [description, setDescription] = React.useState<string>('');
-  const [label, setLabel] = React.useState<string>('');
+  const [title, setTitle] = useState<string>('');
+  const [description, setDescription] = useState<string>('');
+  const [topic, setTopic] = useState<string>('');
+
+  const { data } = useFetchTopics();
+
+  const { mutateAsync: createPost, isPending: isCreatingPost } =
+    useCreatePost();
 
   const goToBack = useCallback(() => {
     navigation.goBack();
   }, [navigation]);
 
-  const handleAddNewData = useCallback(() => {
-    const newFeedData: IData = {
-      id: Math.random(),
-      title: title,
-      description: description,
-      label: label,
-      avatar: '',
-      name: 'Ferdiyanzah',
-      position: 'Software Engineer',
-      upvotes: 0,
-      comments: 0,
-      downvotes: 0,
-      shares: 0,
-      time: new Date(),
+  const handleAddNewData = useCallback(async () => {
+    const newPostPayload: ICreatePostPayload = {
+      header: title,
+      content: description,
+      is_anonim: false,
+      topic_id: topic,
     };
 
-    console.log(newFeedData);
-
-    navigation.navigate('HomeScreen', {
-      screen: 'Home',
-      params: { screen: 'Terbaru' },
-    });
-  }, [navigation, title, description, label]);
-
-  const handleChangeLabel = useCallback((value: string) => {
-    setLabel(value);
-  }, []);
-
-  const handleChangeTitle = useCallback((value: string) => {
-    setTitle(value);
-  }, []);
-
-  const handleChangeDescription = useCallback((value: string) => {
-    setDescription(value);
-  }, []);
+    await createPost(newPostPayload)
+      .then(() => {
+        ToastAndroid.show('Post Berhasil dibuat', ToastAndroid.SHORT);
+        navigation.navigate('HomeScreen', {
+          screen: 'Home',
+          params: { screen: 'Terbaru' },
+        });
+      })
+      .catch(error => {
+        ToastAndroid.show(error.message, ToastAndroid.SHORT);
+      });
+  }, [title, description, topic, createPost, navigation]);
 
   const isPostButtonDisabled = useMemo(() => {
-    return title === '' || description === '' || label === '';
-  }, [title, description, label]);
+    return title === '' || description === '' || topic === '';
+  }, [title, description, topic]);
 
   return (
     <View style={styles.container}>
@@ -95,22 +89,26 @@ const CreatePost = ({ navigation }: CreatePostScreenProps) => {
         </View>
       </View>
       <View style={styles.addPostContainer}>
-        <Input
+        <Dropdown
+          data={data}
+          valueField="id"
+          labelField="label"
           placeholder="Topic"
-          type="text"
-          state="default"
-          onChangeText={handleChangeLabel}
+          onChange={item => setTopic(item.id)}
+          maxHeight={300}
+          style={styles.dropdown}
         />
+
         <TextInput
           placeholder="Judul"
           style={styles.titleInput}
-          onChangeText={handleChangeTitle}
+          onChangeText={setTitle}
         />
         <TextInput
           placeholder="Deskripsi"
           style={styles.descriptionInput}
           multiline
-          onChangeText={handleChangeDescription}
+          onChangeText={setDescription}
         />
       </View>
       <View style={styles.attachmentContainer}>
@@ -127,6 +125,7 @@ const CreatePost = ({ navigation }: CreatePostScreenProps) => {
           onPress={() => {}}
         />
       </View>
+      <Loader isLoading={isCreatingPost} />
     </View>
   );
 };
@@ -159,11 +158,11 @@ const styles = StyleSheet.create({
   },
   titleInput: {
     ...TYPOGRAPHY.heading.large,
-    color: COLORS.neutral400,
+    color: COLORS.neutral700,
   },
   descriptionInput: {
     ...TYPOGRAPHY.paragraph.medium,
-    color: COLORS.neutral400,
+    color: COLORS.neutral700,
   },
   attachmentContainer: {
     flexDirection: 'row',
@@ -173,5 +172,14 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     paddingTop: 12,
     paddingBottom: 16,
+  },
+  dropdown: {
+    width: '100%',
+    borderColor: COLORS.neutral300,
+    backgroundColor: COLORS.neutral200,
+    borderWidth: 1,
+    borderRadius: 8,
+    height: 40,
+    paddingHorizontal: 16,
   },
 });

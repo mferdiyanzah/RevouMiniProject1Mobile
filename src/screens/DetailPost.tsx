@@ -4,30 +4,25 @@ import Input from '@components/atoms/Input';
 import Typography from '@components/atoms/Typography';
 import Post from '@components/molecules/Post';
 import COLORS from '@constants/colors';
+import useFetchPostById from '@hooks/queries/useFetchPostById';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import usePostStore from '@stores/usePostStore';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
-import { IData } from 'types/data';
 import { RootStackParamList } from 'types/navigation';
+import { IPost } from 'types/post';
 
 type DetailPostProps = NativeStackScreenProps<RootStackParamList, 'DetailPost'>;
 
 const DetailPost = ({ route, navigation }: DetailPostProps) => {
   const { id } = route.params;
-  const { posts } = usePostStore();
 
-  const selectedPost = useMemo(() => {
-    return posts.find(post => post.id === id);
-  }, [id, posts]);
+  const { data: selectedPost, isPending: isLoading } = useFetchPostById({
+    postId: id,
+  });
 
   const goToBack = useCallback(() => {
     navigation.goBack();
   }, [navigation]);
-
-  if (!selectedPost) {
-    return <ActivityIndicator />;
-  }
 
   return (
     <View style={styles.container}>
@@ -43,7 +38,11 @@ const DetailPost = ({ route, navigation }: DetailPostProps) => {
         </Typography>
       </View>
       <View style={styles.postDetailContainer}>
-        <Post data={selectedPost as IData} isDetail={true} />
+        {isLoading || !selectedPost ? (
+          <ActivityIndicator size="large" />
+        ) : (
+          <Post data={selectedPost as IPost} isDetail={true} />
+        )}
       </View>
       <View style={styles.postDetailActionButtons}>
         <View style={styles.inputContainer}>
@@ -74,19 +73,22 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 16,
-    padding: 12,
+    gap: 24,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
   },
   postDetailContainer: {
-    flex: 16,
+    flex: 1,
   },
   inputContainer: {
     flex: 1,
   },
   postDetailActionButtons: {
     flexDirection: 'row',
-    padding: 16,
-    borderTopColor: COLORS.gray,
+    paddingHorizontal: 24,
+    paddingTop: 13,
+    paddingBottom: 16,
+    borderTopColor: COLORS.neutral300,
     borderTopWidth: 1,
     gap: 16,
   },

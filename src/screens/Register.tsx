@@ -14,12 +14,10 @@ const Register = () => {
 
   useEffect(() => {
     const handleBackButton = () => {
-      const previousStep = currentStep - 1;
-
       if (currentStep === 1) {
         navigation.goBack();
       } else {
-        setCurrentStep(previousStep);
+        setCurrentStep(currentStep - 1);
       }
       return true;
     };
@@ -31,7 +29,7 @@ const Register = () => {
     };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [currentStep]);
 
   const RenderCurrentForm = useMemo(() => {
     switch (currentStep) {

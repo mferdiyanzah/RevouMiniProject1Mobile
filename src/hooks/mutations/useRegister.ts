@@ -21,6 +21,9 @@ const register = async (payload: RegisterPayload) => {
     const response = await axios.post<RegisterResponse>(
       `${BASE_API_URL}/auth/v4/register`,
       payload,
+      {
+        validateStatus: () => true,
+      },
     );
 
     return response.data;

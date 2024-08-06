@@ -24,7 +24,7 @@ export interface IPost {
   poll_question: null;
 }
 
-interface ITopic {
+export interface ITopic {
   id: string;
   label: string;
 }

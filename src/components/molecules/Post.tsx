@@ -2,10 +2,17 @@ import Label from '@components/atoms/Label';
 import Typography from '@components/atoms/Typography';
 import COLORS from '@constants/colors';
 import TYPOGRAPHY from '@constants/typography';
+import useUpvote from '@hooks/mutations/useUpvote';
 import { useNavigation } from '@react-navigation/native';
 import useAuthStore from '@stores/useAuthStore';
 import React, { memo, useCallback, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  ToastAndroid,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { StackNavigation } from 'types/navigation';
 import { IPost } from 'types/post';
 import ActionPostButton from './ActionPostButton';
@@ -19,6 +26,8 @@ interface PostProps {
 const Post = ({ data, isDetail = false }: PostProps) => {
   const { accessToken } = useAuthStore();
   const navigation = useNavigation<StackNavigation>();
+
+  const { mutateAsync: onUpvote } = useUpvote();
 
   const [showFullDescription, setShowFullDescription] = useState(false);
 
@@ -40,8 +49,12 @@ const Post = ({ data, isDetail = false }: PostProps) => {
       navigation.navigate('Login');
       return;
     }
+
+    if (isDetail) {
+      return;
+    }
     navigation.navigate('DetailPost', { id: data.id });
-  }, [accessToken, data.id, navigation]);
+  }, [accessToken, data, isDetail, navigation]);
 
   const renderDescription = useCallback(() => {
     const descriptionContent =
@@ -67,6 +80,16 @@ const Post = ({ data, isDetail = false }: PostProps) => {
     );
   }, [showFullDescription, isDetail, data.content, toggleDescription]);
 
+  const handleClickUpvote = useCallback(() => {
+    onUpvote(data.id)
+      .then(() => {
+        ToastAndroid.show('Success Upvote', ToastAndroid.SHORT);
+      })
+      .catch(() => {
+        ToastAndroid.show('Error Upvote', ToastAndroid.SHORT);
+      });
+  }, [data, onUpvote]);
+
   return (
     <View style={styles.container}>
       <PostHeader data={data} navigation={navigation} />
@@ -80,9 +103,9 @@ const Post = ({ data, isDetail = false }: PostProps) => {
       <View style={styles.ctaContainer}>
         <ActionPostButton
           upvotes={data.upvotes}
-          downvotes={data.downvotes}
           variant="upvote-downvote"
           navigation={navigation}
+          onClick={handleClickUpvote}
         />
         <ActionPostButton
           value={data.total_comments}
@@ -103,8 +126,8 @@ export default memo(Post);
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 16,
-    paddingVertical: 24,
+    paddingHorizontal: 24,
+    paddingVertical: 16,
     backgroundColor: 'white',
     borderBottomWidth: 1,
     borderBottomColor: COLORS.neutral300,
