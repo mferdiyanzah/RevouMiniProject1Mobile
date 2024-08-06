@@ -17,6 +17,9 @@ import { StackNavigation } from 'types/navigation';
 import { IPost } from 'types/post';
 import ActionPostButton from './ActionPostButton';
 import PostHeader from './PostHeader';
+import usePostStore from '@stores/usePostStore';
+
+import analytics from '@react-native-firebase/analytics';
 
 interface PostProps {
   data: IPost;
@@ -24,10 +27,11 @@ interface PostProps {
 }
 
 const Post = ({ data, isDetail = false }: PostProps) => {
-  const { accessToken } = useAuthStore();
+  const { accessToken, profile } = useAuthStore();
   const navigation = useNavigation<StackNavigation>();
 
   const { mutateAsync: onUpvote } = useUpvote();
+  const { upvotePost, downvotePost } = usePostStore();
 
   const [showFullDescription, setShowFullDescription] = useState(false);
 
@@ -81,14 +85,20 @@ const Post = ({ data, isDetail = false }: PostProps) => {
   }, [showFullDescription, isDetail, data.content, toggleDescription]);
 
   const handleClickUpvote = useCallback(() => {
+    upvotePost(data.id);
     onUpvote(data.id)
-      .then(() => {
+      .then(async () => {
+        await analytics().logEvent('click_upvote', {
+          username: profile?.username,
+          post_id: data.id,
+        });
         ToastAndroid.show('Success Upvote', ToastAndroid.SHORT);
       })
       .catch(() => {
+        downvotePost(data.id);
         ToastAndroid.show('Error Upvote', ToastAndroid.SHORT);
       });
-  }, [data, onUpvote]);
+  }, [data.id, downvotePost, onUpvote, profile?.username, upvotePost]);
 
   return (
     <View style={styles.container}>

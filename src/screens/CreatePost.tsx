@@ -8,29 +8,25 @@ import useCreatePost, {
   ICreatePostPayload,
 } from '@hooks/mutations/useCreatePost';
 import useFetchTopics from '@hooks/queries/useFetchTopics';
-import { MaterialTopTabNavigationProp } from '@react-navigation/material-top-tabs';
-import { CompositeNavigationProp } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useNavigation } from '@react-navigation/native';
 import React, { useCallback, useMemo, useState } from 'react';
 import { StyleSheet, TextInput, ToastAndroid, View } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
-import { RootStackParamList, TopTabHomeParamList } from 'types/navigation';
+import { StackNavigation } from 'types/navigation';
 
-type CreatePostProps = CompositeNavigationProp<
-  NativeStackNavigationProp<RootStackParamList>,
-  MaterialTopTabNavigationProp<TopTabHomeParamList>
->;
+import analytics from '@react-native-firebase/analytics';
+import useAuthStore from '@stores/useAuthStore';
 
-type CreatePostScreenProps = {
-  navigation: CreatePostProps;
-};
-
-const CreatePost = ({ navigation }: CreatePostScreenProps) => {
+const CreatePost = () => {
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [topic, setTopic] = useState<string>('');
 
-  const { data } = useFetchTopics();
+  const navigation = useNavigation<StackNavigation>();
+
+  const { data, isPending: isFetchingTopics } = useFetchTopics();
+
+  const { profile } = useAuthStore();
 
   const { mutateAsync: createPost, isPending: isCreatingPost } =
     useCreatePost();
@@ -47,22 +43,48 @@ const CreatePost = ({ navigation }: CreatePostScreenProps) => {
       topic_id: topic,
     };
 
+    let analyticProperties = {
+      email: profile?.email,
+      username: profile?.username,
+      error_message: null,
+    };
+
     await createPost(newPostPayload)
-      .then(() => {
-        ToastAndroid.show('Post Berhasil dibuat', ToastAndroid.SHORT);
+      .then(async () => {
+        await analytics().logEvent('success_create_post', analyticProperties);
+        ToastAndroid.show('Success Create Post', ToastAndroid.SHORT);
         navigation.navigate('HomeScreen', {
           screen: 'Home',
-          params: { screen: 'Terbaru' },
+          params: {
+            screen: 'Terbaru',
+            params: {
+              refetch: true,
+            },
+          },
         });
       })
-      .catch(error => {
+      .catch(async error => {
+        analyticProperties.error_message = error.message;
+        await analytics().logEvent('failed_create_post', analyticProperties);
         ToastAndroid.show(error.message, ToastAndroid.SHORT);
       });
-  }, [title, description, topic, createPost, navigation]);
+  }, [
+    title,
+    description,
+    topic,
+    profile?.email,
+    profile?.username,
+    createPost,
+    navigation,
+  ]);
 
   const isPostButtonDisabled = useMemo(() => {
     return title === '' || description === '' || topic === '';
   }, [title, description, topic]);
+
+  if (isFetchingTopics) {
+    return <Loader isLoading={isFetchingTopics} />;
+  }
 
   return (
     <View style={styles.container}>

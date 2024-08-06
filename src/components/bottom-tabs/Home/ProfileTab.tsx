@@ -6,15 +6,17 @@ import useLogout from '@hooks/mutations/useLogout';
 import analytics from '@react-native-firebase/analytics';
 import { useNavigation } from '@react-navigation/native';
 import useAuthStore from '@stores/useAuthStore';
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, ToastAndroid, View } from 'react-native';
 import { StackNavigation } from 'types/navigation';
 
 const ProfileTab = () => {
-  const { accessToken, reset, username } = useAuthStore();
+  const { accessToken, reset, profile } = useAuthStore();
   const navigation = useNavigation<StackNavigation>();
 
-  const { mutateAsync: logout, isPending: isLogoutProcessing } = useLogout();
+  const { mutateAsync: logout } = useLogout();
+
+  const [isLogoutProcessing, setIsLogoutProcessing] = useState(false);
 
   useEffect(() => {
     if (!accessToken) {
@@ -25,12 +27,13 @@ const ProfileTab = () => {
   }, []);
 
   const handleReset = useCallback(async () => {
+    setIsLogoutProcessing(true);
     await logout()
       .then(async () => {
         await analytics().logEvent('click_logout', {
-          username,
+          username: profile?.username,
         });
-        reset();
+        await reset();
         navigation.reset({
           index: 0,
           routes: [{ name: 'Login' }],
@@ -38,7 +41,8 @@ const ProfileTab = () => {
       })
       .catch(error => {
         ToastAndroid.show(error.message, ToastAndroid.SHORT);
-      });
+      })
+      .finally(() => setIsLogoutProcessing(false));
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reset]);

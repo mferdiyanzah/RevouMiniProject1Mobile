@@ -1,17 +1,18 @@
-import { Alert } from 'react-native';
+import { ToastAndroid } from 'react-native';
 import * as Keychain from 'react-native-keychain';
 import { create } from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { UserProfile } from '@hooks/mutations/useLogin';
 
 interface AuthStore {
   accessToken: string | null;
   refreshToken: string | null;
   expiredAt: string | null;
-  username: string | null;
+  profile: UserProfile | null;
   setAccessToken: (accessToken: string) => Promise<void>;
   setRefreshToken: (refreshToken: string) => Promise<void>;
   setExpiredAt: (expiredAt: string) => Promise<void>;
-  setUsername: (username: string) => Promise<void>;
+  setProfile: (profile: UserProfile) => Promise<void>;
   getCredentials: () => Promise<Credentials | null>;
   reset: () => Promise<void>;
 }
@@ -20,7 +21,7 @@ interface Credentials {
   accessToken: string;
   refreshToken: string;
   expiredAt: string | null;
-  username: string | null;
+  profile: string | null;
 }
 
 const KEYCHAIN_OPTIONS: Keychain.Options = {
@@ -36,7 +37,7 @@ const KEYCHAIN_SERVICE = {
 
 const ASYNC_STORAGE_KEYS = {
   EXPIRED_AT: 'expiredAt',
-  USERNAME: 'username',
+  PROFILE: 'profile',
 };
 
 const setKeychainValue = async (service: string, value: string) => {
@@ -86,7 +87,7 @@ const useAuthStore = create<AuthStore>(set => ({
   accessToken: null,
   refreshToken: null,
   expiredAt: null,
-  username: null,
+  profile: null,
 
   setAccessToken: async (accessToken: string) => {
     const success = await setKeychainValue(
@@ -96,7 +97,7 @@ const useAuthStore = create<AuthStore>(set => ({
     if (success) {
       set({ accessToken });
     } else {
-      Alert.alert('Error', 'Failed to set access token');
+      ToastAndroid.show('Failed to set access token', ToastAndroid.SHORT);
     }
   },
 
@@ -108,7 +109,7 @@ const useAuthStore = create<AuthStore>(set => ({
     if (success) {
       set({ refreshToken });
     } else {
-      Alert.alert('Error', 'Failed to set refresh token');
+      ToastAndroid.show('Failed to set refresh token', ToastAndroid.SHORT);
     }
   },
 
@@ -120,19 +121,19 @@ const useAuthStore = create<AuthStore>(set => ({
     if (success) {
       set({ expiredAt });
     } else {
-      Alert.alert('Error', 'Failed to set expiredAt');
+      ToastAndroid.show('Failed to set expiredAt', ToastAndroid.SHORT);
     }
   },
 
-  setUsername: async (username: string) => {
+  setProfile: async (profile: UserProfile) => {
     const success = await setAsyncStorageValue(
-      ASYNC_STORAGE_KEYS.USERNAME,
-      username,
+      ASYNC_STORAGE_KEYS.PROFILE,
+      JSON.stringify(profile),
     );
     if (success) {
-      set({ username });
+      set({ profile });
     } else {
-      Alert.alert('Error', 'Failed to set username');
+      ToastAndroid.show('Failed to set profile', ToastAndroid.SHORT);
     }
   },
 
@@ -140,10 +141,15 @@ const useAuthStore = create<AuthStore>(set => ({
     const accessToken = await getKeychainValue(KEYCHAIN_SERVICE.ACCESS_TOKEN);
     const refreshToken = await getKeychainValue(KEYCHAIN_SERVICE.REFRESH_TOKEN);
     const expiredAt = await getAsyncStorageValue(ASYNC_STORAGE_KEYS.EXPIRED_AT);
-    const username = await getAsyncStorageValue(ASYNC_STORAGE_KEYS.USERNAME);
+    const profile = await getAsyncStorageValue(ASYNC_STORAGE_KEYS.PROFILE);
 
     if (accessToken && refreshToken) {
-      const credentials = { accessToken, refreshToken, expiredAt, username };
+      const credentials = {
+        accessToken,
+        refreshToken,
+        expiredAt,
+        profile: JSON.parse(profile as string),
+      };
       set(credentials);
       return credentials;
     }
@@ -169,10 +175,9 @@ const useAuthStore = create<AuthStore>(set => ({
     try {
       await AsyncStorage.multiRemove([
         ASYNC_STORAGE_KEYS.EXPIRED_AT,
-        ASYNC_STORAGE_KEYS.USERNAME,
+        ASYNC_STORAGE_KEYS.PROFILE,
       ]);
     } catch (error) {
-      console.error('Error resetting AsyncStorage:', error);
       errors.push('AsyncStorage reset failed');
     }
 
@@ -180,13 +185,16 @@ const useAuthStore = create<AuthStore>(set => ({
       accessToken: null,
       refreshToken: null,
       expiredAt: null,
-      username: null,
+      profile: null,
     });
 
     if (errors.length > 0) {
-      Alert.alert('Warning', `Some resets failed: ${errors.join(', ')}`);
+      ToastAndroid.show(errors.join(', '), ToastAndroid.SHORT);
     } else {
-      Alert.alert('Success', 'All credentials reset successfully');
+      ToastAndroid.show(
+        'All credentials reset successfully',
+        ToastAndroid.SHORT,
+      );
     }
   },
 }));

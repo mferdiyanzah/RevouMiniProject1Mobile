@@ -20,7 +20,7 @@ interface LoginDataResponse {
   is_verified: boolean;
   refresh_token: string;
 }
-interface UserProfile {
+export interface UserProfile {
   user_id: string;
   name: string;
   username: string;
@@ -76,8 +76,8 @@ const login = async (payload: LoginPayload) => {
   }
 };
 
-const getProfile = async (accessToken: string) => {
-  const setUsername = useAuthStore.getState().setUsername;
+export const getProfile = async (accessToken: string) => {
+  const setProfile = useAuthStore.getState().setProfile;
 
   try {
     const { data } = await axios.get(`${BASE_API_URL}/social/v2/profile`, {
@@ -87,10 +87,11 @@ const getProfile = async (accessToken: string) => {
     });
 
     const userProfile = data.data as UserProfile;
-    setUsername(userProfile.username);
+    setProfile(userProfile);
     return data.data;
   } catch (error) {
     if (error instanceof Error) {
+      console.error(error.message);
       return error.message;
     }
   }
@@ -103,8 +104,6 @@ const useLogin = () =>
       const data = (response as LoginResponse).data;
 
       await getProfile(data.access_token);
-
-      console.log(data, 'onSuccess');
     },
   });
 

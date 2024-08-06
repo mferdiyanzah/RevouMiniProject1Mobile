@@ -29,10 +29,10 @@ const usePostStore = create<PostStore>(set => ({
   downvotePost: id => {
     set(state => ({
       trendingPosts: state.trendingPosts.map(post =>
-        post.id === id ? { ...post, downvotes: post.downvotes + 1 } : post,
+        post.id === id ? { ...post, upvotes: post.upvotes - 1 } : post,
       ),
       newestPosts: state.newestPosts.map(post =>
-        post.id === id ? { ...post, downvotes: post.downvotes + 1 } : post,
+        post.id === id ? { ...post, upvotes: post.upvotes - 1 } : post,
       ),
     }));
   },

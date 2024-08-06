@@ -32,8 +32,7 @@ const InterestTopicSelection = () => {
   const { email, name, username, password, setCurrentStep } =
     useRegisterStore();
 
-  const { setAccessToken, setRefreshToken, setExpiredAt, setUsername } =
-    useAuthStore();
+  const { setAccessToken, setRefreshToken, setExpiredAt } = useAuthStore();
 
   const navigation = useNavigation<StackNavigation>();
 
@@ -132,7 +131,6 @@ const InterestTopicSelection = () => {
       setAccessToken(data.access_token);
       setRefreshToken(data.refresh_token);
       setExpiredAt(data.expired_at);
-      setUsername(username as string);
 
       await analytics().logEvent('success_register_account', {
         email,
@@ -156,7 +154,6 @@ const InterestTopicSelection = () => {
     setAccessToken,
     setExpiredAt,
     setRefreshToken,
-    setUsername,
     username,
   ]);
 
@@ -232,8 +229,8 @@ const styles = StyleSheet.create({
   topicContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    width: width / 3 - 24,
-    height: 120,
+    width: width / 3 - 23,
+    height: width / 3 - 23,
     borderRadius: 8,
     marginRight: 10,
     marginTop: 48,

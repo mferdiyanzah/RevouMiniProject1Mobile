@@ -1,4 +1,3 @@
-import usePostStore from '@stores/usePostStore';
 import { useMutation } from '@tanstack/react-query';
 import axiosWithAuth from './helper';
 
@@ -16,14 +15,8 @@ const onUpvotePost = async (postId: string) => {
 };
 
 const useUpvote = () => {
-  const { upvotePost } = usePostStore();
-
   return useMutation({
     mutationFn: onUpvotePost,
-    onSuccess: (_, postId) => {
-      console.log('upvoted');
-      upvotePost(postId);
-    },
   });
 };
 export default useUpvote;

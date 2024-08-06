@@ -1,27 +1,25 @@
-import { NavigationProp } from '@react-navigation/native';
+import {
+  NavigationProp,
+  NavigatorScreenParams,
+} from '@react-navigation/native';
 
 export type RootStackParamList = {
   Onboarding: undefined;
   Login: undefined;
-  HomeScreen: HomeScreenParamList | undefined;
+  HomeScreen: NavigatorScreenParams<BottomTabParamList> | undefined;
   DetailPost: { id: string };
   CreatePost: undefined;
   Register: undefined;
 };
 
-type HomeScreenParamList = {
-  screen?: keyof BottomTabParamList;
-  params?: { screen?: keyof TopTabHomeParamList };
-};
-
 export type BottomTabParamList = {
-  Home: { screen?: keyof TopTabHomeParamList };
+  Home: NavigatorScreenParams<TopTabHomeParamList>;
   Profile: undefined;
 };
 
 export type TopTabHomeParamList = {
   Trending: undefined;
-  Terbaru: undefined;
+  Terbaru: { refetch?: boolean };
 };
 
 export type StackNavigation = NavigationProp<RootStackParamList>;

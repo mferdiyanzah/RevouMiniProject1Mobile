@@ -3,7 +3,7 @@ import Post from '@components/molecules/Post';
 import COLORS from '@constants/colors';
 import useAuthStore from '@stores/useAuthStore';
 import React, { memo } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { IPost } from 'types/post';
 
 const PostContainer = ({
@@ -17,7 +17,7 @@ const PostContainer = ({
 
   const lastItemStyles = [
     styles.lastItemContainer,
-    { marginBottom: accessToken ? 0 : 50 },
+    { marginBottom: accessToken ? 90 : 180 },
   ];
 
   return (
@@ -25,8 +25,9 @@ const PostContainer = ({
       <Post data={item} />
       {isLastIndex && (
         <View style={lastItemStyles}>
+          <ActivityIndicator color={COLORS.gray} />
           <Typography style={styles.text}>
-            Semua feed sudah kamu lihat 🎉
+            Sedang memuat data baru...
           </Typography>
         </View>
       )}
@@ -37,8 +38,10 @@ const PostContainer = ({
 const styles = StyleSheet.create({
   lastItemContainer: {
     height: 80,
+    gap: 8,
     justifyContent: 'center',
     alignItems: 'center',
+    flexDirection: 'row',
   },
   text: {
     color: COLORS.gray,
