@@ -2,8 +2,8 @@
 <network-security-config>
     <domain-config cleartextTrafficPermitted="false">
         <domain includeSubdomains="true">investly.id</domain>
-        <pin-set>
-            <pin digest="SHA-256"> xZM5YQzou0MKFMURl8/6geZv9te4hSrFXnipnTMvmzU=</pin>
+        <pin-set  expiration="2024-10-01">
+            <pin digest="SHA-256">xZM5YQzou0MKFMURl8/6geZv9te4hSrFXnipnTMvmzU=</pin>
         </pin-set>
     </domain-config>
 
