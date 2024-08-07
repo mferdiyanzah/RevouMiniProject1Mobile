@@ -146,7 +146,7 @@ const Login = ({ navigation }: LoginProps) => {
         <Button
           onPress={handleLogin}
           width="full"
-          label="Masuk"
+          label={isLoading ? 'Loading...' : 'Masuk'}
           variant="primary"
           size="medium"
           disabled={isLoginButtonDisabled}
@@ -156,7 +156,7 @@ const Login = ({ navigation }: LoginProps) => {
         <Button
           onPress={goToRegister}
           width="full"
-          label={isLoading ? 'Loading...' : 'Daftar'}
+          label="Daftar"
           variant="outline"
           size="medium"
         />
