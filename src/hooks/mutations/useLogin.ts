@@ -91,7 +91,6 @@ export const getProfile = async (accessToken: string) => {
     return data.data;
   } catch (error) {
     if (error instanceof Error) {
-      console.error(error.message);
       return error.message;
     }
   }

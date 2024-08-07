@@ -6,10 +6,8 @@ const onUpvotePost = async (postId: string) => {
     const { data } = await axiosWithAuth.post(
       `/social/v2/post/${postId}/up-vote`,
     );
-    console.log(data);
     return data;
   } catch (error) {
-    console.error(error);
     throw error;
   }
 };

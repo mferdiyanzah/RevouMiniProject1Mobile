@@ -1,4 +1,4 @@
-import { ToastAndroid } from 'react-native';
+import { Alert, ToastAndroid } from 'react-native';
 import * as Keychain from 'react-native-keychain';
 import { create } from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -48,8 +48,10 @@ const setKeychainValue = async (service: string, value: string) => {
     });
     return true;
   } catch (error) {
-    console.error(`Error setting ${service}:`, error);
-    return false;
+    if (error instanceof Error) {
+      ToastAndroid.show(error.message, ToastAndroid.SHORT);
+      return false;
+    }
   }
 };
 
@@ -61,8 +63,10 @@ const getKeychainValue = async (service: string): Promise<string | null> => {
     });
     return credential ? credential.password : null;
   } catch (error) {
-    console.error(`Error getting ${service}:`, error);
-    return null;
+    if (error instanceof Error) {
+      ToastAndroid.show(error.message, ToastAndroid.SHORT);
+      return null;
+    }
   }
 };
 
@@ -168,7 +172,6 @@ const useAuthStore = create<AuthStore>(set => ({
         service: KEYCHAIN_SERVICE.REFRESH_TOKEN,
       });
     } catch (error) {
-      console.error('Error resetting Keychain:', error);
       errors.push('Keychain reset failed');
     }
 

@@ -40,8 +40,6 @@ const useRegister = () =>
     onSuccess: async (response: any) => {
       const data = response.data as RegisterResponse;
 
-      console.log(data.access_token);
-
       await getProfile(data.access_token);
     },
   });
