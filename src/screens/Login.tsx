@@ -6,7 +6,7 @@ import TYPOGRAPHY from '@constants/typography';
 import useLogin, { LoginResponse } from '@hooks/mutations/useLogin';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import VALIDATOR from '@utils/validator';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { Alert, StyleSheet, ToastAndroid, View } from 'react-native';
 import { RootStackParamList } from 'types/navigation';
 
@@ -23,21 +23,21 @@ const Login = ({ navigation }: LoginProps) => {
 
   const { setAccessToken, setRefreshToken } = useAuthStore();
 
-  const [email, setEmail] = useState<string>('');
+  const [email, setEmail] = useState<string | undefined>();
   const [emailErrorMessage, setEmailErrorMessage] = useState<string>('');
 
-  const [password, setPassword] = useState<string>('');
+  const [password, setPassword] = useState<string | undefined>();
   const [passwordErrorMessage, setPasswordErrorMessage] = useState<string>('');
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    const emailValidatorResponse = VALIDATOR.email(email);
+    const emailValidatorResponse = VALIDATOR.email(email || '');
     setEmailErrorMessage(emailValidatorResponse);
   }, [email]);
 
   useEffect(() => {
-    const passwordValidatorResponse = VALIDATOR.password(password);
+    const passwordValidatorResponse = VALIDATOR.password(password || '');
     setPasswordErrorMessage(passwordValidatorResponse);
   }, [password]);
 
@@ -52,13 +52,17 @@ const Login = ({ navigation }: LoginProps) => {
 
   const handleLogin = useCallback(async () => {
     setIsLoading(true);
-    const loginPayload = { email, password };
+    const loginPayload = {
+      email: email as string,
+      password: password as string,
+    };
 
     const response = (await onLogin(loginPayload)) as LoginResponse;
     if (!response.status) {
       await analytics().logEvent('failed_login_account', loginPayload);
       ToastAndroid.show('Email atau Password Salah', 500);
     } else {
+      ToastAndroid.show('Horay, Login Berhasil', 500);
       await analytics().logEvent('success_login_account', loginPayload);
       setAccessToken(response.data.access_token);
       setRefreshToken(response.data.refresh_token);
@@ -76,11 +80,15 @@ const Login = ({ navigation }: LoginProps) => {
   }, [navigation]);
 
   const emailState = useMemo(() => {
-    return email ? (emailErrorMessage === '' ? 'success' : 'error') : 'default';
+    return typeof email === 'string'
+      ? emailErrorMessage === ''
+        ? 'success'
+        : 'error'
+      : 'default';
   }, [email, emailErrorMessage]);
 
   const passwordState = useMemo(() => {
-    return password
+    return typeof password === 'string'
       ? passwordErrorMessage === ''
         ? 'success'
         : 'error'
@@ -158,7 +166,7 @@ const Login = ({ navigation }: LoginProps) => {
   );
 };
 
-export default Login;
+export default memo(Login);
 
 const styles = StyleSheet.create({
   container: {

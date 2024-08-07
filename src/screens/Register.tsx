@@ -3,7 +3,7 @@ import InterestTopicSelection from '@components/organisms/InterestTopicSelection
 import PersonalInformation from '@components/organisms/PersonalInformation';
 import { useNavigation } from '@react-navigation/native';
 import useRegisterStore from '@stores/useRegisterStore';
-import React, { useEffect, useMemo } from 'react';
+import React, { memo, useCallback, useEffect } from 'react';
 import { BackHandler, StyleSheet, View } from 'react-native';
 import { StackNavigation } from 'types/navigation';
 
@@ -31,7 +31,7 @@ const Register = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentStep]);
 
-  const RenderCurrentForm = useMemo(() => {
+  const RenderCurrentForm = useCallback(() => {
     switch (currentStep) {
       case 1:
         return <AccountCredential />;
@@ -40,14 +40,18 @@ const Register = () => {
       case 3:
         return <InterestTopicSelection />;
       default:
-        return <AccountCredential />;
+        return null;
     }
   }, [currentStep]);
 
-  return <View style={styles.container}>{RenderCurrentForm}</View>;
+  return (
+    <View style={styles.container}>
+      <RenderCurrentForm />
+    </View>
+  );
 };
 
-export default Register;
+export default memo(Register);
 
 const styles = StyleSheet.create({
   container: {

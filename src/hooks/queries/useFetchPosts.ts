@@ -21,7 +21,7 @@ const fetchPosts = async (params: IFetchPostsParams): Promise<IPost[]> => {
 
   return postData.map(post => ({
     ...post,
-    downvotes: faker.number.int(100),
+    bio: faker.person.jobTitle(),
   }));
 };
 

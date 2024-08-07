@@ -28,5 +28,6 @@
         "stores/*"
       ]
     }
-  }
+  },
+  "module": "esnext"
 }

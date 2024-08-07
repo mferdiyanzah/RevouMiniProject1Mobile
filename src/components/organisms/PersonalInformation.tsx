@@ -6,6 +6,7 @@ import useFetchUsername from '@hooks/queries/useFetchUsername';
 import useRegisterStore from '@stores/useRegisterStore';
 import VALIDATOR from '@utils/validator';
 import React, {
+  memo,
   useCallback,
   useEffect,
   useMemo,
@@ -156,7 +157,7 @@ const PersonalInformation = () => {
   );
 };
 
-export default React.memo(PersonalInformation);
+export default memo(PersonalInformation);
 
 const styles = StyleSheet.create({
   container: {

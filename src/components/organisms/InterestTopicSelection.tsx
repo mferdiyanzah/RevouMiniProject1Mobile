@@ -17,6 +17,7 @@ import {
 } from 'react-native';
 import AuthHeader from './AuthHeader';
 
+import Loader from '@components/atoms/Loader';
 import useRegister, {
   RegisterPayload,
   RegisterResponse,
@@ -36,9 +37,10 @@ const InterestTopicSelection = () => {
 
   const navigation = useNavigation<StackNavigation>();
 
-  const { mutateAsync: register, isPending: isRegisterPending } = useRegister();
+  const { mutateAsync: register } = useRegister();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const { data: responseData, isLoading } = useFetchTopics();
+  const { data: responseData, isLoading: isFetchingTopics } = useFetchTopics();
   const [selectedTopic, setSelectedTopic] = useState<ITopic[]>([]);
 
   const handleClickTopic = async (isSelected: boolean, topic: ITopic) => {
@@ -52,7 +54,7 @@ const InterestTopicSelection = () => {
 
     if (isSelected) {
       await analytics().logEvent(
-        'click_register_unselect_topic_id',
+        'click_register_unselect_topic',
         analyticProperties,
       );
       setSelectedTopic(prev =>
@@ -61,7 +63,7 @@ const InterestTopicSelection = () => {
     } else {
       if (selectedTopic.length < 3) {
         await analytics().logEvent(
-          'click_register_select_topic_id',
+          'click_register_select_topic',
           analyticProperties,
         );
         setSelectedTopic(prev => [...prev, topic]);
@@ -115,6 +117,8 @@ const InterestTopicSelection = () => {
   }, [setCurrentStep]);
 
   const handleRegister = useCallback(async () => {
+    setIsLoading(true);
+
     const payload: RegisterPayload = {
       username: username as string,
       name: name as string,
@@ -123,26 +127,51 @@ const InterestTopicSelection = () => {
       favorite_topic_ids: selectedTopic.map(topic => topic.id),
     };
 
+    /*
+      because firebase limit to 100 characters of parameter value
+      so we need to slice the topic id
+    */
+    const analyticProperties = {
+      email,
+      name,
+      username,
+      topic_id: selectedTopic.map(topic => topic.id.slice(0, 8)).join(','),
+      topic_name: selectedTopic.map(topic => topic.label).join(','),
+    };
+
+    await analytics().logEvent(
+      'click_register_button_step_3',
+      analyticProperties,
+    );
+
     try {
       const response = (await register(payload)) as any;
       const data = response.data as RegisterResponse;
-      ToastAndroid.show('Berhasil mendaftar', ToastAndroid.SHORT);
+      ToastAndroid.show('Horrrayy!, Daftar Berhasil!', ToastAndroid.SHORT);
 
       setAccessToken(data.access_token);
       setRefreshToken(data.refresh_token);
       setExpiredAt(data.expired_at);
 
-      await analytics().logEvent('success_register_account', {
-        email,
-        name,
-        username,
-        topic_id: selectedTopic.map(topic => topic.id.slice(0, 8)).join(','),
-        topic_name: selectedTopic.map(topic => topic.label).join(','),
-      });
-
+      await analytics().logEvent('success_register_account');
+      setIsLoading(false);
       navigation.navigate('HomeScreen');
     } catch (error) {
-      ToastAndroid.show('Gagal mendaftar', ToastAndroid.SHORT);
+      if (error instanceof Error) {
+        const errorAnalyticProperties = {
+          ...analyticProperties,
+          error_message: error.message,
+        };
+
+        await analytics().logEvent(
+          'failed_register_account',
+          errorAnalyticProperties,
+        );
+
+        ToastAndroid.show('Gagal mendaftar', ToastAndroid.SHORT);
+      }
+    } finally {
+      setIsLoading(false);
     }
   }, [
     email,
@@ -169,7 +198,7 @@ const InterestTopicSelection = () => {
         </Typography>
       </View>
       <View style={styles.topicListContainer}>
-        {isLoading ? (
+        {isFetchingTopics ? (
           <ActivityIndicator />
         ) : (
           <FlatList
@@ -201,11 +230,7 @@ const InterestTopicSelection = () => {
           onPress={handleRegister}
         />
       </View>
-      {isRegisterPending && (
-        <View style={styles.loadingOverlay}>
-          <ActivityIndicator size="large" color={COLORS.primary} />
-        </View>
-      )}
+      <Loader isLoading={isLoading} />
     </View>
   );
 };

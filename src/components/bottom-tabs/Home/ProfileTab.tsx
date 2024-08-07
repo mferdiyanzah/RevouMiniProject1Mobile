@@ -34,6 +34,7 @@ const ProfileTab = () => {
           username: profile?.username,
         });
         await reset();
+        setIsLogoutProcessing(false);
         navigation.reset({
           index: 0,
           routes: [{ name: 'Login' }],

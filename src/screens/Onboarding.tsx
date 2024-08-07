@@ -1,6 +1,6 @@
 import Carousel from '@components/molecules/Carousel';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import React, { useMemo } from 'react';
+import React, { memo, useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { RootStackParamList } from 'types/navigation';
 
@@ -45,7 +45,7 @@ const Onboarding = ({
   );
 };
 
-export default Onboarding;
+export default memo(Onboarding);
 
 const styles = StyleSheet.create({
   container: {

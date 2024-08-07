@@ -6,7 +6,7 @@ import Post from '@components/molecules/Post';
 import COLORS from '@constants/colors';
 import useFetchPostById from '@hooks/queries/useFetchPostById';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import React, { useCallback } from 'react';
+import React, { memo, useCallback } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { RootStackParamList } from 'types/navigation';
 import { IPost } from 'types/post';
@@ -63,7 +63,7 @@ const DetailPost = ({ route, navigation }: DetailPostProps) => {
   );
 };
 
-export default DetailPost;
+export default memo(DetailPost);
 
 const styles = StyleSheet.create({
   container: {

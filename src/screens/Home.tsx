@@ -11,7 +11,7 @@ import {
 } from '@react-navigation/bottom-tabs';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import useAuthStore from '@stores/useAuthStore';
-import React, { useCallback } from 'react';
+import React, { memo, useCallback } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { RootStackParamList } from 'types/navigation';
 
@@ -65,7 +65,7 @@ const Home = ({ navigation }: HomeProps) => {
   );
 };
 
-export default Home;
+export default memo(Home);
 
 const styles = StyleSheet.create({
   container: {
@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
   },
   promoContainer: {
     position: 'absolute',
-    bottom: 90,
+    bottom: 88,
     left: 0,
     right: 0,
     height: 50,

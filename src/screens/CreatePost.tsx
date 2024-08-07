@@ -9,7 +9,7 @@ import useCreatePost, {
 } from '@hooks/mutations/useCreatePost';
 import useFetchTopics from '@hooks/queries/useFetchTopics';
 import { useNavigation } from '@react-navigation/native';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { memo, useCallback, useMemo, useState } from 'react';
 import { StyleSheet, TextInput, ToastAndroid, View } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import { StackNavigation } from 'types/navigation';
@@ -43,10 +43,9 @@ const CreatePost = () => {
       topic_id: topic,
     };
 
-    let analyticProperties = {
+    const analyticProperties = {
       email: profile?.email,
       username: profile?.username,
-      error_message: null,
     };
 
     await createPost(newPostPayload)
@@ -64,8 +63,14 @@ const CreatePost = () => {
         });
       })
       .catch(async error => {
-        analyticProperties.error_message = error.message;
-        await analytics().logEvent('failed_create_post', analyticProperties);
+        const errorAnalyticProperties = {
+          ...analyticProperties,
+          error_message: error.message,
+        };
+        await analytics().logEvent(
+          'failed_create_post',
+          errorAnalyticProperties,
+        );
         ToastAndroid.show(error.message, ToastAndroid.SHORT);
       });
   }, [
@@ -152,7 +157,7 @@ const CreatePost = () => {
   );
 };
 
-export default CreatePost;
+export default memo(CreatePost);
 
 const styles = StyleSheet.create({
   container: {

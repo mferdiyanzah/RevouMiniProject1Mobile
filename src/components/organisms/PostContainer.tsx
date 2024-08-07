@@ -17,7 +17,7 @@ const PostContainer = ({
 
   const lastItemStyles = [
     styles.lastItemContainer,
-    { marginBottom: accessToken ? 90 : 180 },
+    { marginBottom: accessToken ? 90 : 140 },
   ];
 
   return (
