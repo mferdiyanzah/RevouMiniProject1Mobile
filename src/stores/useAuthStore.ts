@@ -1,8 +1,8 @@
-import { Alert, ToastAndroid } from 'react-native';
+import { UserProfile } from '@hooks/mutations/useLogin';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ToastAndroid } from 'react-native';
 import * as Keychain from 'react-native-keychain';
 import { create } from 'zustand';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { UserProfile } from '@hooks/mutations/useLogin';
 
 interface AuthStore {
   accessToken: string | null;
@@ -67,6 +67,8 @@ const getKeychainValue = async (service: string): Promise<string | null> => {
       ToastAndroid.show(error.message, ToastAndroid.SHORT);
       return null;
     }
+
+    return null;
   }
 };
 
