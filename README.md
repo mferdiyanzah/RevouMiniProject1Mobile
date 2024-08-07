@@ -34,6 +34,9 @@ Social Investing App to connect, learn, and invest together with friends, truste
 ## Firebase App Distribution Invitation
 [Link](https://appdistribution.firebase.dev/i/361f80c6e3ce59e3)
 
+## Link APK Build
+[Link](https://drive.google.com/file/d/1HjM1hdQqnEgDF8th2GrMevbE7n0nTPxx/view?usp=sharing)
+
 ## Future Improvements
 
 1. Implement end-to-end testing using Detox or Appium
