@@ -80,8 +80,8 @@ android {
         applicationId "com.revou.investly"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 2
-        versionName "1.1"
+        versionCode 1
+        versionName "1.0"
     }
     signingConfigs {
         debug {
@@ -103,13 +103,6 @@ android {
             signingConfig signingConfigs.debug
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
-
-            resValue "string", "CodePushDeploymentKey", "cg-aW-X8BKzO6XNerCExfqkS73bZFeGmfj8Tg"
-            applicationVariants.all { variant ->
-                variant.outputs.all {
-                    outputFileName = "${variant.name}-${variant.versionName}.apk"
-                }
-            }
         }
     }
 }
